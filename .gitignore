@@ -12,6 +12,8 @@
 *.a
 
 moc_*.cpp
+Makefile
+qsonos
 
 *.txt
 *.xml
