@@ -10,3 +10,8 @@
 *.lai
 *.la
 *.a
+
+moc_*.cpp
+
+*.txt
+*.xml
