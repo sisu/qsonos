@@ -3,9 +3,11 @@
 #include <upnp/ixml.h>
 #include <QString>
 #include <QMap>
+#include <QObject>
 class Device;
 
-class Service {
+class Service: public QObject {
+	Q_OBJECT
 public:
 	Service(Device&, Nodeptr);
 
@@ -34,6 +36,9 @@ public:
 	QList<Action> actions;
 	QString actionURL;
 	QMap<QString,QString> defaultParams;
+
+signals:
+	void gotEvent(QMap<QString,QString> vars);
 
 private:
 	void getInfo();

@@ -1,5 +1,7 @@
 #pragma once
 #include <QObject>
+#include <QMap>
+#include <QString>
 class Service;
 
 class AVTransport: public QObject {
@@ -14,4 +16,6 @@ public slots:
 	void stop();
 	void previous();
 	void next();
+
+	void handleEvent(QMap<QString,QString>);
 };

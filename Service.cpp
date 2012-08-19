@@ -20,6 +20,7 @@ void Service::processEvent(QMap<QString,QString> vchanges) {
 //		log()<<nm<<vchanges[nm];
 		stateVars[nm] = vchanges[nm];
 	}
+	emit gotEvent(vchanges);
 }
 void Service::action(QString name, QMap<QString,QString>& params) {
 	Action action = getAction(name);
