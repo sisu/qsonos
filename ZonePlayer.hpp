@@ -1,5 +1,6 @@
 #pragma once
 #include "MediaRenderer.hpp"
+#include "MediaServer.hpp"
 #include "Device.hpp"
 
 class ZonePlayer {
@@ -8,4 +9,5 @@ public:
 
 	Device& dev;
 	MediaRenderer mediaRenderer;
+	MediaServer mediaServer;
 };

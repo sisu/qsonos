@@ -27,14 +27,12 @@ Device& Device::getDeviceByType(QString type) {
 	foreach(Device* dev, devices) {
 		if (dev->type == type) return *dev;
 	}
-	// TODO
-	throw 5;
+	throw UPNPException("device not found: "+type);
 }
 Service& Device::getServiceByType(QString type) {
 	type = "urn:schemas-upnp-org:service:"+type;
 	foreach(Service* srv, services) {
 		if (srv->type == type) return *srv;
 	}
-	// TODO
-	throw 7;
+	throw UPNPException("service not found "+type);
 }

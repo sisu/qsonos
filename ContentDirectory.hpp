@@ -5,5 +5,7 @@ class ContentDirectory {
 public:
 	ContentDirectory(Service& srv);
 
+	void getPlaylist();
+
 	Service& service;
 };

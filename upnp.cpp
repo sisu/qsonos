@@ -102,23 +102,23 @@ IXML_Document* downloadDoc(QString url) {
 	int contentLength;
 	int httpStatus;
 	int r = UpnpOpenHttpGet(qPrintable(url), &handle, &contentType, &contentLength, &httpStatus, 1);
-	log()<<"openhttpget:"<<r;
+//	log()<<"openhttpget:"<<r;
 	if (r) return 0;
 
 	const size_t BS = 10<<10;
 	char buf[BS+1];
 	QByteArray res;
-	log()<<"downloading doc";
+//	log()<<"downloading doc";
 	while(1) {
 		size_t size = BS;
 		r = UpnpReadHttpGet(handle, buf, &size, 1);
-		log()<<"read "<<size;
+//		log()<<"read "<<size;
 		buf[size] = 0;
 		res += buf;
 		if (r) break;
 		if (size < BS) break;
 	}
-	log()<<"got document"<<res.size();
+//	log()<<"got document"<<res.size();
 //	log()<<res.data();
 
 	return ixmlParseBuffer(res.data());

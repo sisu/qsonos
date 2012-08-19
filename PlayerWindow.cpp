@@ -14,6 +14,7 @@ PlayerWindow::PlayerWindow(QWidget* par): QMainWindow(par), player(0) {
 void PlayerWindow::setPlayer(ZonePlayer* pl) {
 	player = pl;
 	makeToolbar();
+	player->mediaServer.contentDir.getPlaylist();
 }
 void PlayerWindow::makeToolbar() {
 	QToolBar* toolbar = addToolBar("toolbar");
@@ -36,7 +37,7 @@ void PlayerWindow::foundDevice(Device* dev) {
 		ZonePlayer* pl = new ZonePlayer(*dev);
 		log()<<"found zoneplayer";
 		setPlayer(pl);
-	} catch(...) {
-		log()<<"not valid zoneplayer";
+	} catch(const UPNPException& e) {
+		log()<<"not valid zoneplayer:"<<e.what();
 	}
 }

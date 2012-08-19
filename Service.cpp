@@ -27,7 +27,7 @@ void Service::action(QString name, QMap<QString,QString>& params) {
 	foreach(QString arg, action.inArgs) {
 		if (!params.contains(arg)) {
 			if (!defaultParams.contains(arg))
-				throw 18;
+				throw UPNPException("Action "+name+" missing parameter "+arg);
 			params[arg] = defaultParams[arg];
 		}
 	}
@@ -62,7 +62,7 @@ Action& Service::getAction(QString name) {
 		Action& a = actions[i];
 		if (a.name==name) return a;
 	}
-	throw 15;
+	throw UPNPException("Action "+name+" not found");
 }
 
 void Service::subscribe(QObject* handler) {
