@@ -4,8 +4,7 @@
 
 AVTransport::AVTransport(Service& srv): service(srv) {
 	service.defaultParams["InstanceID"] = "0";
-	connect(&service, SIGNAL(gotEvent(QMap<QString,QString>)),
-			this, SLOT(handleEvent(QMap<QString,QString>)));
+	service.subscribe(this);
 }
 
 void AVTransport::play() {

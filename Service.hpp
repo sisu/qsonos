@@ -13,6 +13,7 @@ public:
 
 	void processEvent(QMap<QString,QString> vchanges);
 	void action(QString name, QMap<QString,QString>& params);
+	void subscribe(QObject* handler);
 
 	template<class...A>
 	void action(QString name, A... params) {

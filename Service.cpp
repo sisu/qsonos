@@ -65,6 +65,11 @@ Action& Service::getAction(QString name) {
 	throw 15;
 }
 
+void Service::subscribe(QObject* handler) {
+	connect(this, SIGNAL(gotEvent(QMap<QString,QString>)),
+			handler, SLOT(handleEvent(QMap<QString,QString>)));
+}
+
 void Service::getInfo() {
 	QString url = dev.baseURL + getValue(doc, "SCPDURL");
 	IXML_Document* desc;
