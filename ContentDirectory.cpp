@@ -6,12 +6,13 @@ ContentDirectory::ContentDirectory(Service& srv): service(srv) {
 }
 void ContentDirectory::getPlaylist() {
 	log()<<"getting playlist";
-	QMap<QString,QString> args;
+	ArgMap args;
 	args["ObjectID"] = "Q:0";
 	args["BrowseFlag"] = "BrowseDirectChildren";
 	args["Filter"] = "*";
 	args["StartingIndex"] = "0";
 	args["RequestedCount"] = "10";
 	args["SortCriteria"] = "";
-	service.action("Browse", args);
+	ArgMap res = service.action("Browse", args);
+	log()<<res["Result"];
 }

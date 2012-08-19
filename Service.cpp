@@ -13,7 +13,7 @@ Service::Service(Device& dev, Nodeptr np): dev(dev), doc(np) {
 	actionURL = dev.baseURL + getValue(doc, "controlURL");
 }
 
-void Service::processEvent(QMap<QString,QString> vchanges) {
+void Service::processEvent(ArgMap vchanges) {
 //	log()<<"event\n"<<ixmlPrintDocument(doc);
 	log()<<"event";
 	foreach(QString nm, vchanges.keys()) {
@@ -22,7 +22,7 @@ void Service::processEvent(QMap<QString,QString> vchanges) {
 	}
 	emit gotEvent(vchanges);
 }
-void Service::action(QString name, QMap<QString,QString>& params) {
+ArgMap Service::action(QString name, ArgMap& params) {
 	Action action = getAction(name);
 	foreach(QString arg, action.inArgs) {
 		if (!params.contains(arg)) {
@@ -55,6 +55,14 @@ void Service::action(QString name, QMap<QString,QString>& params) {
 	log()<<ixmlPrintDocument(anode);
 	log()<<"sent action"<<r<<actionURL<<type;
 	if (resp) log()<<ixmlPrintDocument(resp);
+
+	ArgMap res;
+	if (resp) {
+		for(Nodeptr i=resp->n.firstChild->firstChild; i; i=i->nextSibling) {
+			res[i->nodeName] = QString::fromUtf8(i->firstChild->nodeValue);
+		}
+	}
+	return res;
 }
 
 Action& Service::getAction(QString name) {
@@ -66,8 +74,8 @@ Action& Service::getAction(QString name) {
 }
 
 void Service::subscribe(QObject* handler) {
-	connect(this, SIGNAL(gotEvent(QMap<QString,QString>)),
-			handler, SLOT(handleEvent(QMap<QString,QString>)));
+	connect(this, SIGNAL(gotEvent(ArgMap)),
+			handler, SLOT(handleEvent(ArgMap)));
 }
 
 void Service::getInfo() {

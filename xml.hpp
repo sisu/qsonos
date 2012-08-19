@@ -12,5 +12,5 @@ inline Nodeptr getChild(Nodeptr node, QString name) {
 	return 0;
 }
 inline QString getValue(Nodeptr node, QString name) {
-	return getChild(node,name)->firstChild->nodeValue;
+	return QString::fromUtf8(getChild(node,name)->firstChild->nodeValue);
 }

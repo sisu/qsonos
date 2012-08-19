@@ -10,7 +10,7 @@
 PlayerWindow* wnd;
 
 int main(int argc, char* argv[]) {
-	qRegisterMetaType<QMap<QString,QString>>("QMap<QString,QString>");
+	qRegisterMetaType<ArgMap>("ArgMap");
 	UpnpSetLogLevel(UPNP_ALL);
 	QApplication app(argc,argv);
 
