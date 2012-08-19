@@ -23,7 +23,7 @@ void AVTransport::next() {
 	service.action("Next");
 }
 
-void AVTransport::handleEvent(QMap<QString,QString> vars) {
+void AVTransport::handleEvent(ArgMap vars) {
 //	log()<<"got avtransport event"<<vars.size();
 	if (!vars.contains("LastChange")) return;
 	QString change = vars["LastChange"];

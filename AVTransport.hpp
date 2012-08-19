@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QMap>
 #include <QString>
+#include "common.hpp"
 class Service;
 
 class AVTransport: public QObject {
@@ -17,5 +18,5 @@ public slots:
 	void previous();
 	void next();
 
-	void handleEvent(QMap<QString,QString>);
+	void handleEvent(ArgMap);
 };
