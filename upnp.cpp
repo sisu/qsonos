@@ -68,7 +68,7 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 	}
 }
 int callback(Upnp_EventType type, void* event, void* cookie) {
-	log()<<"event "<<type;
+	log()<<"event "<<type<<!!cookie;
 	// libupnp sometimes decides to give 0 as cookie so don't use it
 	(void)cookie;
 //	UPNP* upnp = (UPNP*)cookie;
@@ -118,6 +118,7 @@ IXML_Document* downloadDoc(QString url) {
 		if (r) break;
 		if (size < BS) break;
 	}
+	UpnpCloseHttpGet(handle);
 //	log()<<"got document"<<res.size();
 //	log()<<res.data();
 
