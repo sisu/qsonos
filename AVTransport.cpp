@@ -22,6 +22,11 @@ void AVTransport::previous() {
 void AVTransport::next() {
 	service.action("Next");
 }
+void AVTransport::setTrack(int num) {
+	service.action("Seek",
+			"Unit", "TRACK_NR",
+			"Target", QString::number(num+1));
+}
 
 void AVTransport::handleEvent(ArgMap vars) {
 //	log()<<"got avtransport event"<<vars.size();

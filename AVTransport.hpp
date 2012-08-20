@@ -17,6 +17,7 @@ public slots:
 	void stop();
 	void previous();
 	void next();
+	void setTrack(int num);
 
 	void handleEvent(ArgMap);
 };

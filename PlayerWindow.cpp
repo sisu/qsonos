@@ -1,4 +1,5 @@
 #include "PlayerWindow.hpp"
+#include "PlaylistWidget.hpp"
 #include "common.hpp"
 #include <QLabel>
 #include <QPushButton>
@@ -9,12 +10,15 @@
 #include <QAction>
 
 PlayerWindow::PlayerWindow(QWidget* par): QMainWindow(par), player(0) {
+	playlist = new PlaylistWidget(*this);
+	setCentralWidget(playlist);
 }
 
 void PlayerWindow::setPlayer(ZonePlayer* pl) {
 	player = pl;
 	makeToolbar();
-	player->mediaServer.contentDir.getPlaylist();
+	QList<ArgMap> plist = player->mediaServer.contentDir.getPlaylist();
+	playlist->setList(plist);
 }
 void PlayerWindow::makeToolbar() {
 	QToolBar* toolbar = addToolBar("toolbar");
