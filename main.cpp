@@ -5,6 +5,7 @@
 #include "PlayerWindow.hpp"
 #include <cassert>
 #include <QApplication>
+#include <QMetaType>
 #include <upnp/upnpdebug.h>
 
 PlayerWindow* wnd;
