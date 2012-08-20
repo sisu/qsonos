@@ -37,5 +37,12 @@ void AVTransport::handleEvent(ArgMap vars) {
 		log()<<"failed parsing lastchange";
 		return;
 	}
-	log() << ixmlPrintDocument(doc);
+//	log() << ixmlPrintDocument(doc);
+	ArgMap args;
+	for(Nodeptr i=doc->n.firstChild->firstChild->firstChild; i; i=i->nextSibling) {
+//		log()<<i->nodeName<<i->firstAttr->nodeValue;
+		args[QString::fromUtf8(i->nodeName)] = QString::fromUtf8(i->firstAttr->nodeValue);
+	}
+//	log()<<args;
+	emit lastChange(args);
 }

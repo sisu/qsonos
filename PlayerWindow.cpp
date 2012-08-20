@@ -19,6 +19,8 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 	makeToolbar();
 	QList<ArgMap> plist = player->mediaServer.contentDir.getPlaylist();
 	playlist->setList(plist);
+	connect(&player->mediaRenderer.avtransport, SIGNAL(lastChange(ArgMap)),
+			playlist, SLOT(handleChange(ArgMap)));
 }
 void PlayerWindow::makeToolbar() {
 	QToolBar* toolbar = addToolBar("toolbar");

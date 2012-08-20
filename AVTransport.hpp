@@ -11,6 +11,9 @@ public:
 	AVTransport(Service& srv);
 	Service& service;
 
+signals:
+	void lastChange(ArgMap);
+
 public slots:
 	void play();
 	void pause();

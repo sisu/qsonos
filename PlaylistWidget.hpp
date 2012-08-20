@@ -12,6 +12,7 @@ public:
 	PlaylistWidget(PlayerWindow&);
 
 	void setList(QList<ArgMap> items);
+	void setActiveTrack(int idx);
 
 	virtual void keyPressEvent(QKeyEvent*);
 
@@ -19,4 +20,8 @@ public:
 
 public slots:
 	void setTrack();
+	void handleChange(ArgMap);
+
+private:
+	int activeIdx;
 };
