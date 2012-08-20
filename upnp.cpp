@@ -110,8 +110,7 @@ IXML_Document* downloadDoc(QString url) {
 	QByteArray res;
 //	log()<<"downloading doc";
 	while(1) {
-		// FIXME: find out when this changed
-#if UPNP_VERSION_MAJOR<=1 && UPNP_VERSION_MINOR<=6 && UPNP_VERSION_PATCH<=6
+#if UPNP_VERSION_MAJOR<=1 && UPNP_VERSION_MINOR<=6 && UPNP_VERSION_PATCH<=9
 		unsigned size = BS;
 #else
 		size_t size = BS;
