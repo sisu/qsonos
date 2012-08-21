@@ -8,6 +8,7 @@
 #include <QStyle>
 #include <QToolBar>
 #include <QAction>
+#include <QSlider>
 
 PlayerWindow::PlayerWindow(QWidget* par): QMainWindow(par), player(0) {
 	playlist = new PlaylistWidget(*this);
@@ -21,6 +22,10 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 	playlist->setList(plist);
 	connect(&player->mediaRenderer.avtransport, SIGNAL(lastChange(ArgMap)),
 			playlist, SLOT(handleChange(ArgMap)));
+	connect(&player->mediaRenderer.avtransport, SIGNAL(lastChange(ArgMap)),
+			this, SLOT(handleChange(ArgMap)));
+	connect(&player->mediaRenderer.avtransport.service, SIGNAL(gotResult(ArgMap)),
+			playlist, SLOT(handleResult(ArgMap)));
 }
 void PlayerWindow::makeToolbar() {
 	QToolBar* toolbar = addToolBar("toolbar");
@@ -37,6 +42,9 @@ void PlayerWindow::makeToolbar() {
 //				receivers[i], slotnames[i]);
 				&player->mediaRenderer.avtransport, slotnames[i]);
 	}
+
+	QSlider* playslider = new QSlider(Qt::Horizontal, toolbar);
+	toolbar->addWidget(playslider);
 }
 void PlayerWindow::foundDevice(Device* dev) {
 	try {
@@ -46,4 +54,8 @@ void PlayerWindow::foundDevice(Device* dev) {
 	} catch(const UPNPException& e) {
 		log()<<"not valid zoneplayer:"<<e.what();
 	}
+}
+
+void PlayerWindow::handleChange(ArgMap args) {
+	(void)args;
 }

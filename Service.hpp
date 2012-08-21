@@ -11,9 +11,9 @@ public:
 	Service(Device&, Nodeptr);
 
 	void processEvent(ArgMap vchanges);
-	ArgMap action(QString name, ArgMap& params);
-	void subscribe(QObject* handler);
+	void actionResult(ArgMap res);
 
+	ArgMap action(QString name, ArgMap& params); void subscribe(QObject* handler); 
 	template<class...A>
 	ArgMap action(QString name, A... params) {
 		ArgMap pmap;
@@ -26,8 +26,9 @@ public:
 		pmap[name] = value;
 		setParams(pmap, params...);
 	}
+	static ArgMap parseActionResult(IXML_Document* doc);
 
-	Action& getAction(QString name);
+	const Action& getAction(QString name) const;
 
 	Device& dev;
 	Nodeptr doc;
@@ -39,7 +40,9 @@ public:
 
 signals:
 	void gotEvent(ArgMap vars);
+	void gotResult(ArgMap vars);
 
 private:
 	void getInfo();
+	IXML_Document* makeAction(QString name, ArgMap& params) const;
 };

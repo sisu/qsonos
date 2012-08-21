@@ -7,10 +7,10 @@
 
 Service::Service(Device& dev, Nodeptr np): dev(dev), doc(np) {
 	type = getValue(doc, "serviceType");
+	actionURL = dev.baseURL + getValue(doc, "controlURL");
 	log()<<"making service "<<type;
 	upnp.subscribe(this);
 	getInfo();
-	actionURL = dev.baseURL + getValue(doc, "controlURL");
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -22,7 +22,11 @@ void Service::processEvent(ArgMap vchanges) {
 	}
 	emit gotEvent(vchanges);
 }
-ArgMap Service::action(QString name, ArgMap& params) {
+void Service::actionResult(ArgMap res) {
+	emit gotResult(res);
+}
+
+IXML_Document* Service::makeAction(QString name, ArgMap& params) const {
 	Action action = getAction(name);
 	foreach(QString arg, action.inArgs) {
 		if (!params.contains(arg)) {
@@ -45,6 +49,10 @@ ArgMap Service::action(QString name, ArgMap& params) {
 			assert(!r);
 		}
 	}
+	return anode;
+}
+ArgMap Service::action(QString name, ArgMap& params) {
+	IXML_Document* anode = makeAction(name, params);
 	IXML_Document* resp;
 	int r = UpnpSendAction(upnp.handle,
 			qPrintable(actionURL),
@@ -64,10 +72,19 @@ ArgMap Service::action(QString name, ArgMap& params) {
 	}
 	return res;
 }
+ArgMap Service::parseActionResult(IXML_Document* doc) {
+	ArgMap res;
+	if (doc) {
+		for(Nodeptr i=doc->n.firstChild->firstChild; i; i=i->nextSibling) {
+			res[i->nodeName] = QString::fromUtf8(i->firstChild->nodeValue);
+		}
+	}
+	return res;
+}
 
-Action& Service::getAction(QString name) {
+const Action& Service::getAction(QString name) const {
 	for(int i=0; i<actions.size(); ++i) {
-		Action& a = actions[i];
+		const Action& a = actions[i];
 		if (a.name==name) return a;
 	}
 	throw UPNPException("Action "+name+" not found");

@@ -17,4 +17,5 @@ private:
 public slots:
 	void foundDevice(Device* dev);
 	void setPlayer(ZonePlayer* pl);
+	void handleChange(ArgMap args);
 };

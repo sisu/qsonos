@@ -22,23 +22,6 @@ Device* makeDevice(Upnp_Discovery* d) {
 	QString baseUrl = dloc.left(dloc.indexOf('/', 7));
 	return new Device(baseUrl, getChild(doc->n.firstChild, "device"));
 }
-QMap<QString,QString> getEVars(IXML_Document* doc) {
-	QMap<QString,QString> map;
-	if (!doc) {
-		return map;
-	}
-	QString pname = "e:property";
-	for(Nodeptr i = doc->n.firstChild->firstChild; i; i=i->nextSibling) {
-		if (i->nodeName!=pname) {
-			log()<<"event node:"<<i->nodeName;
-			continue;
-		}
-		Nodeptr j = i->firstChild;
-		map[j->nodeName] = j->firstChild ? j->firstChild->nodeValue : "";
-	}
-	log()<<"vars:"<<map.size();
-	return map;
-}
 
 void UPNP::handleEvent(Upnp_EventType type, void* event) {
 	switch(type) {
@@ -59,8 +42,15 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 			assert(event);
 			Upnp_Event* e = (Upnp_Event*)event;
 			if (eventHandler.contains(e->Sid))
-				eventHandler[e->Sid]->processEvent(getEVars(e->ChangedVariables));
+				eventHandler[e->Sid]->processEvent(parseVars(e->ChangedVariables));
 //			log()<<"got event:"<<ixmlPrintDocument(e->ChangedVariables);
+			break;
+		}
+		case UPNP_CONTROL_ACTION_COMPLETE:
+		{
+			Upnp_Action_Complete* a = (Upnp_Action_Complete*)event;
+			if (controlURLs.contains(a->CtrlUrl))
+				controlURLs[a->CtrlUrl]->actionResult(parseVars(a->ActionResult));
 			break;
 		}
 		default:
@@ -94,6 +84,8 @@ void UPNP::subscribe(Service* srv) {
 	int r = UpnpSubscribe(handle, qPrintable(url), &timeout, id);
 	log()<<"subscribe"<<url<<":"<<r<<" ; "<<id;
 	regEventHandler(id, srv);
+
+	controlURLs[srv->actionURL] = srv;
 }
 
 IXML_Document* downloadDoc(QString url) {
@@ -127,4 +119,22 @@ IXML_Document* downloadDoc(QString url) {
 //	log()<<res.data();
 
 	return ixmlParseBuffer(res.data());
+}
+
+ArgMap parseVars(IXML_Document* doc) {
+	ArgMap map;
+	if (!doc) {
+		return map;
+	}
+	QString pname = "e:property";
+	for(Nodeptr i = doc->n.firstChild->firstChild; i; i=i->nextSibling) {
+		if (i->nodeName!=pname) {
+			log()<<"event node:"<<i->nodeName;
+			continue;
+		}
+		Nodeptr j = i->firstChild;
+		map[j->nodeName] = j->firstChild ? j->firstChild->nodeValue : "";
+	}
+	log()<<"vars:"<<map.size();
+	return map;
 }

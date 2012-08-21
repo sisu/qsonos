@@ -19,8 +19,9 @@ public:
 	PlayerWindow& player;
 
 public slots:
-	void setTrack();
+	void changeTrack();
 	void handleChange(ArgMap);
+	void handleResult(ArgMap);
 
 private:
 	int activeIdx;

@@ -32,12 +32,12 @@ void PlaylistWidget::setList(QList<ArgMap> items) {
 
 void PlaylistWidget::keyPressEvent(QKeyEvent* event) {
 	if (event->key()==Qt::Key_Enter || event->key()==Qt::Key_Return)
-		setTrack();
+		changeTrack();
 	else
 		QTreeWidget::keyPressEvent(event);
 }
 
-void PlaylistWidget::setTrack() {
+void PlaylistWidget::changeTrack() {
 	log()<<"setTrack "<<currentIndex();
 	player.player->mediaRenderer.avtransport.setTrack(currentIndex().row());
 	player.player->mediaRenderer.avtransport.play();
@@ -46,6 +46,10 @@ void PlaylistWidget::handleChange(ArgMap args) {
 //	log()<<"change"<<args;
 	if (args.contains("CurrentTrack"))
 		setActiveTrack(args["CurrentTrack"].toInt()-1);
+}
+void PlaylistWidget::handleResult(ArgMap res) {
+	if (res.contains("Track"))
+		setActiveTrack(res["Track"].toInt()-1);
 }
 void PlaylistWidget::setActiveTrack(int idx) {
 	QTreeWidgetItem* item = topLevelItem(idx);
