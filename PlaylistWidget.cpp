@@ -17,9 +17,10 @@ PlaylistWidget::PlaylistWidget(PlayerWindow& player):
 void PlaylistWidget::setList(QList<ArgMap> items) {
 	clear();
 	QString attrs[] = {"title", "creator", "album"};
-	QStringList titles{"Title", "Artist", "Album"};
-//	int N = sizeof(titles)/sizeof(titles[0]);
-	int N = titles.size();
+	QString titlearr[] = {"Title", "Artist", "Album"};
+	int N = sizeof(titlearr)/sizeof(titlearr[0]);
+	QStringList titles;
+	for(int i=0; i<N; ++i) titles.append(titlearr[i]);
 	setHeaderLabels(titles);
 	setColumnCount(N);
 	foreach(ArgMap i, items) {
