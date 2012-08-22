@@ -64,13 +64,7 @@ ArgMap Service::action(QString name, ArgMap& params) {
 	log()<<"sent action"<<r<<actionURL<<type;
 	if (resp) log()<<ixmlPrintDocument(resp);
 
-	ArgMap res;
-	if (resp) {
-		for(Nodeptr i=resp->n.firstChild->firstChild; i; i=i->nextSibling) {
-			res[i->nodeName] = QString::fromUtf8(i->firstChild->nodeValue);
-		}
-	}
-	return res;
+	return parseVars(resp);
 }
 void Service::actionAsync(QString name, ArgMap& params) {
 	IXML_Document* anode = makeAction(name, params);
