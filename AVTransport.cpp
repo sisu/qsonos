@@ -28,6 +28,10 @@ void AVTransport::setTrack(int num) {
 			"Target", QString::number(num+1));
 }
 
+void AVTransport::getPositionInfo() {
+	service.actionAsync("GetPositionInfo");
+}
+
 void AVTransport::handleEvent(ArgMap vars) {
 //	log()<<"got avtransport event"<<vars.size();
 	if (!vars.contains("LastChange")) return;

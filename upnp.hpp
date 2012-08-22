@@ -29,4 +29,6 @@ signals:
 extern UPNP upnp;
 
 ArgMap parseVars(IXML_Document* doc);
+ArgMap parseEvent(IXML_Document* doc);
 IXML_Document* downloadDoc(QString url);
+int upnpCallback(Upnp_EventType type, void* event, void* cookie);

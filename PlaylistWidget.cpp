@@ -10,7 +10,7 @@ PlaylistWidget::PlaylistWidget(PlayerWindow& player):
 {
 	connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
 //			this, SLOT(setTrack(QTreeWidgetItem*,int)));
-			this, SLOT(setTrack()));
+			this, SLOT(changeTrack()));
 	setRootIsDecorated(0);
 }
 

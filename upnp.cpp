@@ -42,13 +42,14 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 			assert(event);
 			Upnp_Event* e = (Upnp_Event*)event;
 			if (eventHandler.contains(e->Sid))
-				eventHandler[e->Sid]->processEvent(parseVars(e->ChangedVariables));
+				eventHandler[e->Sid]->processEvent(parseEvent(e->ChangedVariables));
 //			log()<<"got event:"<<ixmlPrintDocument(e->ChangedVariables);
 			break;
 		}
 		case UPNP_CONTROL_ACTION_COMPLETE:
 		{
 			Upnp_Action_Complete* a = (Upnp_Action_Complete*)event;
+			log()<<"got action complete:"<<ixmlPrintDocument(a->ActionResult);
 			if (controlURLs.contains(a->CtrlUrl))
 				controlURLs[a->CtrlUrl]->actionResult(parseVars(a->ActionResult));
 			break;
@@ -57,7 +58,7 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 			break;
 	}
 }
-int callback(Upnp_EventType type, void* event, void* cookie) {
+int upnpCallback(Upnp_EventType type, void* event, void* cookie) {
 	log()<<"event "<<type<<!!cookie;
 	// libupnp sometimes decides to give 0 as cookie so don't use it
 	(void)cookie;
@@ -71,7 +72,7 @@ void UPNP::start(QString type) {
 	type = "urn:schemas-upnp-org:device:"+type;
 	int r = UpnpInit(0, 0);
 	assert(r == UPNP_E_SUCCESS);
-	r = UpnpRegisterClient(callback, 0, &handle);
+	r = UpnpRegisterClient(upnpCallback, 0, &handle);
 	assert(r == UPNP_E_SUCCESS);
 	r = UpnpSearchAsync(handle, 3, qPrintable(type), this);
 	assert(r == UPNP_E_SUCCESS);
@@ -121,7 +122,7 @@ IXML_Document* downloadDoc(QString url) {
 	return ixmlParseBuffer(res.data());
 }
 
-ArgMap parseVars(IXML_Document* doc) {
+ArgMap parseEvent(IXML_Document* doc) {
 	ArgMap map;
 	if (!doc) {
 		return map;
@@ -134,6 +135,14 @@ ArgMap parseVars(IXML_Document* doc) {
 		}
 		Nodeptr j = i->firstChild;
 		map[j->nodeName] = j->firstChild ? j->firstChild->nodeValue : "";
+	}
+	log()<<"vars:"<<map.size();
+	return map;
+}
+ArgMap parseVars(IXML_Document* doc) {
+	ArgMap map;
+	for(Nodeptr i = doc->n.firstChild->firstChild; i; i=i->nextSibling) {
+		map[i->nodeName] = QString::fromUtf8(i->firstChild ? i->firstChild->nodeValue : "");
 	}
 	log()<<"vars:"<<map.size();
 	return map;

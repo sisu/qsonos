@@ -72,6 +72,16 @@ ArgMap Service::action(QString name, ArgMap& params) {
 	}
 	return res;
 }
+void Service::actionAsync(QString name, ArgMap& params) {
+	IXML_Document* anode = makeAction(name, params);
+	UpnpSendActionAsync(upnp.handle,
+			qPrintable(actionURL),
+			qPrintable(type),
+			0,
+			anode,
+			upnpCallback,
+			&upnp);
+}
 ArgMap Service::parseActionResult(IXML_Document* doc) {
 	ArgMap res;
 	if (doc) {

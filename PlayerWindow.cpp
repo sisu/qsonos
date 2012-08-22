@@ -26,6 +26,8 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 			this, SLOT(handleChange(ArgMap)));
 	connect(&player->mediaRenderer.avtransport.service, SIGNAL(gotResult(ArgMap)),
 			playlist, SLOT(handleResult(ArgMap)));
+
+	player->mediaRenderer.avtransport.getPositionInfo();
 }
 void PlayerWindow::makeToolbar() {
 	QToolBar* toolbar = addToolBar("toolbar");

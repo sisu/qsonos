@@ -13,12 +13,21 @@ public:
 	void processEvent(ArgMap vchanges);
 	void actionResult(ArgMap res);
 
-	ArgMap action(QString name, ArgMap& params); void subscribe(QObject* handler); 
+	ArgMap action(QString name, ArgMap& params);
+	void actionAsync(QString name, ArgMap& params);
+	void subscribe(QObject* handler);
+
 	template<class...A>
 	ArgMap action(QString name, A... params) {
 		ArgMap pmap;
 		setParams(pmap, params...);
 		return action(name, pmap);
+	}
+	template<class...A>
+	void actionAsync(QString name, A... params) {
+		ArgMap pmap;
+		setParams(pmap, params...);
+		return actionAsync(name, pmap);
 	}
 	void setParams(ArgMap&) {}
 	template<class...A>
