@@ -26,6 +26,8 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 			this, SLOT(handleChange(ArgMap)));
 	connect(&player->mediaRenderer.avtransport.service, SIGNAL(gotResult(ArgMap)),
 			playlist, SLOT(handleResult(ArgMap)));
+	connect(&player->mediaRenderer.avtransport.service, SIGNAL(gotResult(ArgMap)),
+			this, SLOT(handleResult(ArgMap)));
 
 	player->mediaRenderer.avtransport.getPositionInfo();
 }
@@ -45,8 +47,8 @@ void PlayerWindow::makeToolbar() {
 				&player->mediaRenderer.avtransport, slotnames[i]);
 	}
 
-	QSlider* playslider = new QSlider(Qt::Horizontal, toolbar);
-	toolbar->addWidget(playslider);
+	playSlider = new QSlider(Qt::Horizontal, toolbar);
+	toolbar->addWidget(playSlider);
 }
 void PlayerWindow::foundDevice(Device* dev) {
 	try {
@@ -60,4 +62,9 @@ void PlayerWindow::foundDevice(Device* dev) {
 
 void PlayerWindow::handleChange(ArgMap args) {
 	(void)args;
+}
+void PlayerWindow::handleResult(ArgMap args) {
+	if (args.contains("RelTime") && args.contains("TrackDuration")) {
+//		playSlider->setSliderPosition();
+	}
 }

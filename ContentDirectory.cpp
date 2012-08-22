@@ -1,6 +1,7 @@
 #include "ContentDirectory.hpp"
 #include "Service.hpp"
 #include "common.hpp"
+#include "parse.hpp"
 
 ContentDirectory::ContentDirectory(Service& srv): service(srv) {
 }
@@ -26,18 +27,8 @@ QList<ArgMap> ContentDirectory::getPlaylist() {
 			return res;
 		}
 	//	log()<<QString::fromUtf8(ixmlPrintDocument(doc));
-		Nodeptr root=doc->n.firstChild;
-		for(Nodeptr i=root->firstChild; i; i=i->nextSibling) {
-			ArgMap tags;
-			for(Nodeptr j=i->firstChild; j; j=j->nextSibling) {
-				QString name = QString::fromUtf8(j->nodeName);
-				QString value = QString::fromUtf8(j->firstChild->nodeValue);
-				name = name.right(name.size()-name.indexOf(':')-1);
-				tags[name] = value;
-			}
-//			log()<<tags;
-			res.push_back(tags);
-		}
+		res.append(parsePlaylist(doc));
+
 		int total = ares["TotalMatches"].toInt();
 		log()<<"res size:"<<res.size();
 		if (res.size() == total)

@@ -2,6 +2,7 @@
 #include "Device.hpp"
 #include "xml.hpp"
 #include "upnp.hpp"
+#include "parse.hpp"
 #include <upnp/upnptools.h>
 #include <cassert>
 

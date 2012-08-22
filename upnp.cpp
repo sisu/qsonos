@@ -2,6 +2,7 @@
 #include "Device.hpp"
 #include "common.hpp"
 #include "xml.hpp"
+#include "parse.hpp"
 #include <cassert>
 #include <QSet>
 #include <QMap>
@@ -120,30 +121,4 @@ IXML_Document* downloadDoc(QString url) {
 //	log()<<res.data();
 
 	return ixmlParseBuffer(res.data());
-}
-
-ArgMap parseEvent(IXML_Document* doc) {
-	ArgMap map;
-	if (!doc) {
-		return map;
-	}
-	QString pname = "e:property";
-	for(Nodeptr i = doc->n.firstChild->firstChild; i; i=i->nextSibling) {
-		if (i->nodeName!=pname) {
-			log()<<"event node:"<<i->nodeName;
-			continue;
-		}
-		Nodeptr j = i->firstChild;
-		map[j->nodeName] = j->firstChild ? j->firstChild->nodeValue : "";
-	}
-	log()<<"vars:"<<map.size();
-	return map;
-}
-ArgMap parseVars(IXML_Document* doc) {
-	ArgMap map;
-	for(Nodeptr i = doc->n.firstChild->firstChild; i; i=i->nextSibling) {
-		map[i->nodeName] = QString::fromUtf8(i->firstChild ? i->firstChild->nodeValue : "");
-	}
-	log()<<"vars:"<<map.size();
-	return map;
 }
