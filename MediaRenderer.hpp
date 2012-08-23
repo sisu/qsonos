@@ -1,6 +1,7 @@
 #pragma once
 #include "Device.hpp"
 #include "AVTransport.hpp"
+#include "RenderingControl.hpp"
 
 class MediaRenderer {
 public:
@@ -8,4 +9,5 @@ public:
 
 	Device& dev;
 	AVTransport avtransport;
+	RenderingControl renderingControl;
 };
