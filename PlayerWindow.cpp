@@ -50,6 +50,9 @@ void PlayerWindow::makeToolbar() {
 
 	playSlider = new QSlider(Qt::Horizontal, toolbar);
 	toolbar->addWidget(playSlider);
+
+	timeLabel = new QLabel(toolbar);
+	toolbar->addWidget(timeLabel);
 }
 void PlayerWindow::foundDevice(Device* dev) {
 	try {
@@ -59,6 +62,12 @@ void PlayerWindow::foundDevice(Device* dev) {
 	} catch(const UPNPException& e) {
 		log()<<"not valid zoneplayer:"<<e.what();
 	}
+}
+
+static QString formatTime(int sec) {
+	char buf[128];
+	sprintf(buf,"%02d:%02d", sec/60, sec%60);
+	return buf;
 }
 
 void PlayerWindow::handleChange(ArgMap args) {
@@ -71,5 +80,6 @@ void PlayerWindow::handleResult(ArgMap args) {
 		log()<<"track time"<<reltime<<duration<<" ; "<<args["RelTime"]<<args["TrackDuration"];
 		playSlider->setMaximum(duration);
 		playSlider->setSliderPosition(reltime);
+		timeLabel->setText(formatTime(reltime)+" / "+formatTime(duration));
 	}
 }

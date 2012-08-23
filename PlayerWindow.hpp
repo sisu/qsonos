@@ -3,6 +3,7 @@
 
 class PlaylistWidget;
 class QSlider;
+class QLabel;
 
 class PlayerWindow: public QMainWindow {
 	Q_OBJECT
@@ -10,8 +11,10 @@ public:
 	PlayerWindow(QWidget* par=0);
 
 	ZonePlayer* player;
+
 	PlaylistWidget* playlist;
 	QSlider* playSlider;
+	QLabel* timeLabel;
 
 private:
 	void makeToolbar();
