@@ -1,5 +1,6 @@
 #include "PlayerWindow.hpp"
 #include "PlaylistWidget.hpp"
+#include "ZonePlayer.hpp"
 #include "common.hpp"
 #include "parse.hpp"
 #include <QLabel>
@@ -37,6 +38,7 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 			this, SLOT(handleResult(ArgMap)));
 
 	player->mediaRenderer.avtransport.getPositionInfo();
+	startTimer(1000);
 }
 void PlayerWindow::makeToolbar() {
 	QToolBar* toolbar = addToolBar("toolbar");
@@ -108,4 +110,11 @@ void PlayerWindow::readSettings() {
 	QSettings settings;
 	restoreGeometry(settings.value("geometry").toByteArray());
 	restoreState(settings.value("windowState").toByteArray());
+}
+
+void PlayerWindow::timerEvent(QTimerEvent* event) {
+	if (player) {
+		player->mediaRenderer.avtransport.getPositionInfo();
+	}
+	QMainWindow::timerEvent(event);
 }

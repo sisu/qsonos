@@ -1,11 +1,14 @@
 #include <QMainWindow>
-#include "ZonePlayer.hpp"
+#include "common.hpp"
 
+class ZonePlayer;
+class Device;
 class PlaylistWidget;
 class QSlider;
 class QLabel;
 class QAction;
 class QCloseEvent;
+class QTimerEvent;
 
 class PlayerWindow: public QMainWindow {
 	Q_OBJECT
@@ -19,6 +22,7 @@ public:
 	QLabel* timeLabel;
 
 	virtual void closeEvent(QCloseEvent* event);
+	virtual void timerEvent(QTimerEvent* event);
 
 private:
 	void readSettings();
