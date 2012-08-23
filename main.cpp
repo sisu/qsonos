@@ -14,6 +14,8 @@ int main(int argc, char* argv[]) {
 	qRegisterMetaType<ArgMap>("ArgMap");
 	UpnpSetLogLevel(UPNP_ALL);
 	QApplication app(argc,argv);
+	app.setOrganizationName("qsonos");
+	app.setApplicationName("qsonos");
 
 	wnd = new PlayerWindow;
 	wnd->show();
