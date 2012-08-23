@@ -44,7 +44,7 @@ QList<ArgMap> parsePlaylist(IXML_Document* doc) {
 int timeSeconds(QString time) {
 	QStringList parts = time.split(':');
 	int r=0;
-	for(int i=0,t=1; i<parts.size(); ++i,t*=60)
+	for(int i=parts.size()-1,t=1; i>=0; --i,t*=60)
 		r += t*parts[i].toInt();
 	return r;
 }

@@ -1,6 +1,7 @@
 #include "PlayerWindow.hpp"
 #include "PlaylistWidget.hpp"
 #include "common.hpp"
+#include "parse.hpp"
 #include <QLabel>
 #include <QPushButton>
 #include <QToolButton>
@@ -65,6 +66,10 @@ void PlayerWindow::handleChange(ArgMap args) {
 }
 void PlayerWindow::handleResult(ArgMap args) {
 	if (args.contains("RelTime") && args.contains("TrackDuration")) {
-//		playSlider->setSliderPosition();
+		int reltime = timeSeconds(args["RelTime"]);
+		int duration = timeSeconds(args["TrackDuration"]);
+		log()<<"track time"<<reltime<<duration<<" ; "<<args["RelTime"]<<args["TrackDuration"];
+		playSlider->setMaximum(duration);
+		playSlider->setSliderPosition(reltime);
 	}
 }
