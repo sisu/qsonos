@@ -12,6 +12,7 @@
 #include <QAction>
 #include <QSlider>
 #include <QSettings>
+#include <QKeySequence>
 
 PlayerWindow::PlayerWindow(QWidget* par): QMainWindow(par), player(0) {
 	readSettings();
@@ -60,9 +61,11 @@ void PlayerWindow::makeToolbar() {
 	QStyle::StandardPixmap icons[] = {QStyle::SP_MediaPlay, QStyle::SP_MediaPause, QStyle::SP_MediaStop, QStyle::SP_MediaSkipBackward, QStyle::SP_MediaSkipForward};
 //	QObject* receivers[] = {&player->mediaRenderer.avtransport};
 	const QString names[] = {"Play","Pause","Stop","Previous","Next"};
+	const QString shortcuts[] = {"X", "C", "V", "Z", "B"};
 
 	for(int i=0; i<5; ++i) {
 		QAction* action = toolbar->addAction(style->standardIcon(icons[i]), names[i]);
+		action->setShortcut(shortcuts[i]);
 		buttonActions[i] = action;
 	}
 
