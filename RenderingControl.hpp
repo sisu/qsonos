@@ -8,4 +8,13 @@ class RenderingControl: public QObject {
 public:
 	RenderingControl(Service& srv);
 	Service& service;
+
+signals:
+	void gotVolume(int);
+
+public slots:
+	void setVolume(int vol);
+	void getVolume();
+
+	void gotResult(ArgMap);
 };

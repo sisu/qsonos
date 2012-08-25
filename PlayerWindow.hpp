@@ -19,6 +19,7 @@ public:
 
 	PlaylistWidget* playlist;
 	QSlider* playSlider;
+	QSlider* volumeSlider;
 	QLabel* timeLabel;
 
 	virtual void closeEvent(QCloseEvent* event);
@@ -35,4 +36,5 @@ public slots:
 	void setPlayer(ZonePlayer* pl);
 	void handleChange(ArgMap args);
 	void handleResult(ArgMap args);
+	void gotVolume(int vol);
 };

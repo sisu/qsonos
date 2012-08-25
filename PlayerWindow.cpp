@@ -28,16 +28,26 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 	QList<ArgMap> plist = player->mediaServer.contentDir.getPlaylist();
 	playlist->setList(plist);
 
-	connect(&player->mediaRenderer.avtransport, SIGNAL(lastChange(ArgMap)),
+	AVTransport* avtransport = &player->mediaRenderer.avtransport;
+	connect(avtransport, SIGNAL(lastChange(ArgMap)),
 			playlist, SLOT(handleChange(ArgMap)));
-	connect(&player->mediaRenderer.avtransport, SIGNAL(lastChange(ArgMap)),
+	connect(avtransport, SIGNAL(lastChange(ArgMap)),
 			this, SLOT(handleChange(ArgMap)));
-	connect(&player->mediaRenderer.avtransport.service, SIGNAL(gotResult(ArgMap)),
+
+	connect(&avtransport->service, SIGNAL(gotResult(ArgMap)),
 			playlist, SLOT(handleResult(ArgMap)));
-	connect(&player->mediaRenderer.avtransport.service, SIGNAL(gotResult(ArgMap)),
+	connect(&avtransport->service, SIGNAL(gotResult(ArgMap)),
 			this, SLOT(handleResult(ArgMap)));
 
-	player->mediaRenderer.avtransport.getPositionInfo();
+	RenderingControl* renderingControl = &player->mediaRenderer.renderingControl;
+	connect(renderingControl, SIGNAL(gotVolume(int)),
+			this, SLOT(gotVolume(int)));
+
+	connect(volumeSlider, SIGNAL(valueChanged(int)),
+			&player->mediaRenderer.renderingControl, SLOT(setVolume(int)));
+
+	avtransport->getPositionInfo();
+	renderingControl->getVolume();
 	startTimer(1000);
 }
 void PlayerWindow::makeToolbar() {
@@ -57,10 +67,18 @@ void PlayerWindow::makeToolbar() {
 	}
 
 	playSlider = new QSlider(Qt::Horizontal, toolbar);
+	playSlider->setTracking(0);
 	toolbar->addWidget(playSlider);
 
 	timeLabel = new QLabel(toolbar);
 	toolbar->addWidget(timeLabel);
+
+	toolbar->addSeparator();
+	volumeSlider = new QSlider(Qt::Horizontal, toolbar);
+	volumeSlider->setMaximumWidth(100);
+	volumeSlider->setMaximum(100);
+	volumeSlider->setTracking(1);
+	toolbar->addWidget(volumeSlider);
 }
 void PlayerWindow::connectToolbar() {
 	const char* slotnames[] = {SLOT(play()), SLOT(pause()), SLOT(stop()), SLOT(previous()), SLOT(next())};
@@ -99,6 +117,10 @@ void PlayerWindow::handleResult(ArgMap args) {
 		timeLabel->setText(formatTime(reltime)+" / "+formatTime(duration));
 	}
 }
+void PlayerWindow::gotVolume(int vol) {
+	volumeSlider->setSliderPosition(vol);
+}
+
 
 void PlayerWindow::closeEvent(QCloseEvent* event) {
 	QSettings settings;

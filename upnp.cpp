@@ -53,6 +53,7 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 			log()<<"got action complete:"<<ixmlPrintDocument(a->ActionResult);
 			if (controlURLs.contains(a->CtrlUrl))
 				controlURLs[a->CtrlUrl]->actionResult(parseVars(a->ActionResult));
+			else log()<<"no handler for control url"<<a->CtrlUrl;
 			break;
 		}
 		default:

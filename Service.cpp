@@ -61,9 +61,12 @@ ArgMap Service::action(QString name, ArgMap& params) {
 			0,
 			anode,
 			&resp);
-	log()<<ixmlPrintDocument(anode);
-	log()<<"sent action"<<r<<actionURL<<type;
-	if (resp) log()<<ixmlPrintDocument(resp);
+	if (r) {
+		throw UPNPException("Action "+name+" failed:\n"+ixmlPrintDocument(anode)+"\n"+ixmlPrintDocument(resp));
+	}
+//	log()<<ixmlPrintDocument(anode);
+//	log()<<"sent action"<<r<<actionURL<<type;
+//	if (resp) log()<<ixmlPrintDocument(resp);
 
 	return parseVars(resp);
 }
