@@ -8,22 +8,22 @@ AVTransport::AVTransport(Service& srv): service(srv) {
 }
 
 void AVTransport::play() {
-	service.action("Play", "Speed", "1");
+	service.actionAsync("Play", "Speed", "1");
 }
 void AVTransport::pause() {
-	service.action("Pause");
+	service.actionAsync("Pause");
 }
 void AVTransport::stop() {
-	service.action("Stop");
+	service.actionAsync("Stop");
 }
 void AVTransport::previous() {
-	service.action("Previous");
+	service.actionAsync("Previous");
 }
 void AVTransport::next() {
-	service.action("Next");
+	service.actionAsync("Next");
 }
 void AVTransport::setTrack(int num) {
-	service.action("Seek",
+	service.actionAsync("Seek",
 			"Unit", "TRACK_NR",
 			"Target", QString::number(num+1));
 }

@@ -13,7 +13,7 @@ PlaylistWidget::PlaylistWidget(PlayerWindow& player):
 			this, SLOT(changeTrack()));
 	setRootIsDecorated(0);
 
-	QString titlearr[] = {"Title", "Artist", "Album"};
+	QString titlearr[] = {"", "Title", "Artist", "Album"};
 	int N = sizeof(titlearr)/sizeof(titlearr[0]);
 	QStringList titles;
 	for(int i=0; i<N; ++i) titles.append(titlearr[i]);
@@ -23,10 +23,10 @@ PlaylistWidget::PlaylistWidget(PlayerWindow& player):
 
 void PlaylistWidget::setList(QList<ArgMap> items) {
 	clear();
-	QString attrs[] = {"title", "creator", "album"};
+	QString attrs[] = {"originalTrackNumber", "title", "creator", "album"};
 	foreach(ArgMap i, items) {
 		QTreeWidgetItem* x = new QTreeWidgetItem(this);
-		for(int j=0; j<3; ++j)
+		for(int j=0; j<columnCount(); ++j)
 			x->setText(j, i[attrs[j]]);
 	}
 }
@@ -59,12 +59,12 @@ void PlaylistWidget::setActiveTrack(int idx) {
 	QFont font;
 	if (activeIdx>=0) {
 		QTreeWidgetItem* old = topLevelItem(activeIdx);
-		for(int i=0; i<3; ++i) {
+		for(int i=0; i<columnCount(); ++i) {
 			old->setFont(i, font);
 		}
 	}
 	font.setBold(1);
-	for(int i=0; i<3; ++i) {
+	for(int i=0; i<columnCount(); ++i) {
 		item->setFont(i, font);
 	}
 	activeIdx = idx;
