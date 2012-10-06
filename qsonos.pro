@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = 
+TARGET =
 DEPENDPATH += . tmp
 INCLUDEPATH += .
 LIBS += -lixml -lupnp
@@ -10,3 +10,5 @@ SOURCES += *.cpp
 
 QMAKE_CXXFLAGS += -std=c++0x -Wall
 QMAKE_CXXFLAGS += -g -fno-inline
+
+CONFIG += debug

@@ -36,6 +36,10 @@ IXML_Document* Service::makeAction(QString name, ArgMap& params) const {
 			params[arg] = defaultParams[arg];
 		}
 	}
+	foreach(QString arg, params.keys()) {
+		if (!action.inArgs.contains(arg))
+			throw UPNPException("Extra argument for action "+name+" : "+arg);
+	}
 	log()<<"action"<<name;
 	IXML_Document* anode=0;
 	if (params.empty()) {

@@ -37,4 +37,7 @@ public slots:
 	void handleChange(ArgMap args);
 	void handleResult(ArgMap args);
 	void gotVolume(int vol);
+
+	void toggleRepeat(bool on);
+	void toggleShuffle(bool on);
 };

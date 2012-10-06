@@ -6,7 +6,7 @@
 
 PlaylistWidget::PlaylistWidget(PlayerWindow& player):
 	player(player),
-	activeIdx(0)
+	activeIdx(-1)
 {
 	connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
 //			this, SLOT(setTrack(QTreeWidgetItem*,int)));

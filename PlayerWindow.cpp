@@ -21,7 +21,10 @@ PlayerWindow::PlayerWindow(QWidget* par): QMainWindow(par), player(0) {
 	makeToolbar();
 }
 
+bool hasPlayer=0;
 void PlayerWindow::setPlayer(ZonePlayer* pl) {
+	if (player) return;
+
 	player = pl;
 
 	connectToolbar();
@@ -75,6 +78,17 @@ void PlayerWindow::makeToolbar() {
 
 	timeLabel = new QLabel(toolbar);
 	toolbar->addWidget(timeLabel);
+
+	QString choiseButtons[] = {"repeat.svg", "shuffle.svg"};
+	QString choiseNames[] = {"Repeat", "Shuffle"};
+	const char* choiseSlots[] = {SLOT(toggleRepeat(bool)),SLOT(toggleShuffle(bool))};
+	for(int i=0; i<2; ++i) {
+		QAction* a = toolbar->addAction(QIcon(choiseButtons[i]), choiseNames[i]);
+		QAbstractButton* button = (QAbstractButton*)toolbar->widgetForAction(a);
+		button->setCheckable(1);
+		connect(button, SIGNAL(toggled(bool)),
+				this, choiseSlots[i]);
+	}
 
 	toolbar->addSeparator();
 	volumeSlider = new QSlider(Qt::Horizontal, toolbar);
@@ -142,4 +156,9 @@ void PlayerWindow::timerEvent(QTimerEvent* event) {
 		player->mediaRenderer.avtransport.getPositionInfo();
 	}
 	QMainWindow::timerEvent(event);
+}
+
+void PlayerWindow::toggleRepeat(bool on) {
+}
+void PlayerWindow::toggleShuffle(bool on) {
 }

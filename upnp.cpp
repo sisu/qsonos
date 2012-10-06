@@ -32,6 +32,7 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 			Upnp_Discovery* d = (Upnp_Discovery*)event;
 			QString id = d->DeviceId;
 			if (!curDevices.contains(id)) {
+				log()<<"new device "<<id<<" ; "<<curDevices<<'\n';
 				curDevices.insert(id);
 				Device* dev = makeDevice(d);
 				emit newDevice(dev);
@@ -50,7 +51,7 @@ void UPNP::handleEvent(Upnp_EventType type, void* event) {
 		case UPNP_CONTROL_ACTION_COMPLETE:
 		{
 			Upnp_Action_Complete* a = (Upnp_Action_Complete*)event;
-			log()<<"got action complete:"<<ixmlPrintDocument(a->ActionResult);
+//			log()<<"got action complete:"<<ixmlPrintDocument(a->ActionResult);
 			if (controlURLs.contains(a->CtrlUrl))
 				controlURLs[a->CtrlUrl]->actionResult(parseVars(a->ActionResult));
 			else log()<<"no handler for control url"<<a->CtrlUrl;
