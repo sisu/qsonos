@@ -4,7 +4,8 @@
 #include "Service.hpp"
 #include <cassert>
 
-Device::Device(QUrl baseURL, QDomNode doc): baseURL(baseURL), doc(doc) {
+Device::Device(QUrl baseURL, QDomNode doc, ControlPoint& cp):
+	baseURL(baseURL), doc(doc), cp(cp) {
 	type = getValue(doc, "deviceType");
 	log()<<"making device "<<type;
 
@@ -13,7 +14,7 @@ Device::Device(QUrl baseURL, QDomNode doc): baseURL(baseURL), doc(doc) {
 		services.append(new Service(*this, i));
 	}
 	for(QDomNode i : getChild(doc, "deviceList")) {
-		devices.append(new Device(baseURL, i));
+		devices.append(new Device(baseURL, i, cp));
 	}
 }
 

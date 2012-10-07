@@ -2,6 +2,7 @@
 #include "Device.hpp"
 #include "xml.hpp"
 #include "Http.hpp"
+#include "Service.hpp"
 #include <QDomDocument>
 
 namespace {
@@ -65,9 +66,19 @@ void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
 	QDomNode devN = getChild(root, "device");
 	if (!devN.isNull()) {
 		try {
-			Device* dev = new Device(url, devN);
+			Device* dev = new Device(url, devN, *this);
+			(void)dev;
 		} catch(UPNPException e) {
 			qDebug()<<"Failed creating device "<<e.what();
 		}
 	}
+}
+
+void ControlPoint::subscribe(Service& srv) {
+	QNetworkRequest req(srv.eventURL);
+	req.setRawHeader("HOST", srv.dev.baseURL.encodedHost());
+	req.setRawHeader("CALLBACK", "");
+	req.setRawHeader("NT", "upnp:event");
+	connect(http.custom(req, "SUBSCRIBE"), SIGNAL(got(QNetworkReply*)),
+			&srv, SLOT(subscribeRes(QNetworkReply*)));
 }

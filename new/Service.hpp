@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QUrl>
 class Device;
+class QNetworkReply;
 
 class Service: public QObject {
 	Q_OBJECT
@@ -45,10 +46,12 @@ public:
 	ArgMap stateVars;
 	QList<Action> actions;
 	QUrl actionURL;
+	QUrl eventURL;
 	ArgMap defaultParams;
 
 public slots:
 	void gotDoc(QDomDocument doc);
+	void subscribeRes(QNetworkReply*);
 
 signals:
 	void gotEvent(ArgMap vars);

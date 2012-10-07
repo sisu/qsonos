@@ -4,10 +4,11 @@
 #include <QDomNode>
 #include <QUrl>
 class Service;
+class ControlPoint;
 
 class Device {
 public:
-	Device(QUrl baseURL, QDomNode doc);
+	Device(QUrl baseURL, QDomNode doc, ControlPoint& cp);
 
 	Device& getDeviceByType(QString type);
 	Service& getServiceByType(QString type);
@@ -17,4 +18,5 @@ public:
 	QString type;
 	QList<Device*> devices;
 	QList<Service*> services;
+	ControlPoint& cp;
 };

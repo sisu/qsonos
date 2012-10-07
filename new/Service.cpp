@@ -2,14 +2,18 @@
 #include "Device.hpp"
 #include "xml.hpp"
 #include "Http.hpp"
+#include "ControlPoint.hpp"
 #include <cassert>
+#include <QNetworkReply>
 
 Service::Service(Device& dev, QDomNode np): dev(dev), doc(np) {
 	type = getValue(doc, "serviceType");
 	actionURL = dev.baseURL.resolved(getValue(doc, "controlURL"));
+	eventURL = dev.baseURL.resolved(getValue(doc, "eventSubURL"));
 	log()<<"making service "<<type;
 //	upnp.subscribe(this);
 	getInfo();
+	dev.cp.subscribe(*this);
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -108,7 +112,7 @@ void Service::subscribe(QObject* handler) {
 #endif
 
 void Service::gotDoc(QDomDocument doc) {
-	qDebug()<<"service desc "<<type;
+//	qDebug()<<"service desc "<<type;
 	QDomNode root = doc.firstChild().nextSibling();
 	qDebug()<<root.nodeName();
 	for(QDomNode i : getChild(root, "actionList")) {
@@ -136,4 +140,8 @@ void Service::getInfo() {
 	log()<<"got scpd";
 
 #endif
+}
+
+void Service::subscribeRes(QNetworkReply* reply) {
+	qDebug()<<"subscribe res: "<<reply->readAll();
 }
