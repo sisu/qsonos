@@ -32,7 +32,7 @@ void HttpSession::onData() {
 			} else {
 				int idx = line.indexOf(':');
 				if (idx<0) continue;
-				headers[line.left(idx).trimmed().toLower()] = line.right(line.size()-idx-1).trimmed();
+				headers[line.left(idx).trimmed().toLower()] = line.mid(idx+1).trimmed();
 			}
 		} else break;
 	}

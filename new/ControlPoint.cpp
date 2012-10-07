@@ -54,7 +54,7 @@ void ControlPoint::handleReply(QByteArray data) {
 	foreach(QByteArray line, data.split('\n')) {
 		int idx = line.indexOf(':');
 		if (idx<0) continue;
-		args[line.left(idx).trimmed().toLower()] = line.right(line.size()-idx-1).trimmed();
+		args[line.left(idx).trimmed().toLower()] = line.mid(idx+1).trimmed();
 	}
 
 	if (!args.contains("location")) return;
