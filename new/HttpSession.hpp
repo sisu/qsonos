@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include "common.hpp"
 class QTcpSocket;
 
 class HttpSession: public QObject {
@@ -12,4 +13,7 @@ private slots:
 
 private:
 	QTcpSocket* socket;
+	ArgMap headers;
+	QByteArray curData;
+	size_t waitingData;
 };
