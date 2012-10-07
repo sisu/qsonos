@@ -124,22 +124,6 @@ void Service::getInfo() {
 	QUrl url = dev.baseURL.resolved(getValue(doc, "SCPDURL"));
 	connect(http.get(url), SIGNAL(xml(QDomDocument)),
 			this, SLOT(gotDoc(QDomDocument)));
-#if 0
-	IXML_Document* desc;
-	log()<<"loading service scpd"<<url;
-	int r = UpnpDownloadXmlDoc(qPrintable(url), &desc);
-	if (r) {
-		log()<<"loading failed "<<r;
-		desc = downloadDoc(url);
-		if (!desc) {
-			log()<<"failed again";
-			return;
-		}
-//		assert(!r);
-	}
-	log()<<"got scpd";
-
-#endif
 }
 
 void Service::subscribeRes(QNetworkReply* reply) {

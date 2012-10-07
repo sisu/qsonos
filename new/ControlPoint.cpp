@@ -19,13 +19,15 @@ namespace {
 };
 
 ControlPoint::ControlPoint() {
+	interface = getInterface();
 }
 
 void ControlPoint::listen() {
 	connect(&sock, SIGNAL(readyRead()),
 			this, SLOT(read()));
 	sock.bind(mPort, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-	sock.joinMulticastGroup(mAddr, getInterface());
+	sock.joinMulticastGroup(mAddr, interface);
+	httpServer.start();
 }
 void ControlPoint::discover(QString type) {
 	search = type;
@@ -75,10 +77,16 @@ void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
 }
 
 void ControlPoint::subscribe(Service& srv) {
+	qDebug()<<"subscribing"<<srv.eventURL;
 	QNetworkRequest req(srv.eventURL);
-	req.setRawHeader("HOST", srv.dev.baseURL.encodedHost());
-	req.setRawHeader("CALLBACK", "");
+	QString host = srv.dev.baseURL.host()+":"+QString::number(srv.dev.baseURL.port());
+	req.setRawHeader("HOST", host.toUtf8());
+	QString addr = interface.addressEntries()[0].ip().toString() + ":" + QString::number(httpServer.serverPort());
+	req.setRawHeader("CALLBACK", ("<"+addr+"/0>").toUtf8());
 	req.setRawHeader("NT", "upnp:event");
 	connect(http.custom(req, "SUBSCRIBE"), SIGNAL(got(QNetworkReply*)),
 			&srv, SLOT(subscribeRes(QNetworkReply*)));
+
+	foreach(QByteArray x, req.rawHeaderList())
+		qDebug()<<x<<":"<<req.rawHeader(x);
 }
