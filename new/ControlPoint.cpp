@@ -82,7 +82,7 @@ void ControlPoint::subscribe(Service& srv) {
 	QString host = srv.dev.baseURL.host()+":"+QString::number(srv.dev.baseURL.port());
 	req.setRawHeader("HOST", host.toUtf8());
 	QString addr = interface.addressEntries()[0].ip().toString() + ":" + QString::number(httpServer.serverPort());
-	req.setRawHeader("CALLBACK", ("<"+addr+"/0>").toUtf8());
+	req.setRawHeader("CALLBACK", ("<http://"+addr+"/0>").toUtf8());
 	req.setRawHeader("NT", "upnp:event");
 	connect(http.custom(req, "SUBSCRIBE"), SIGNAL(got(QNetworkReply*)),
 			&srv, SLOT(subscribeRes(QNetworkReply*)));
