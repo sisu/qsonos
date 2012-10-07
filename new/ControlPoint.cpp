@@ -1,6 +1,7 @@
 #include "ControlPoint.hpp"
 #include "Device.hpp"
 #include "xml.hpp"
+#include "Http.hpp"
 #include <QDomDocument>
 
 namespace {
@@ -17,8 +18,6 @@ namespace {
 };
 
 ControlPoint::ControlPoint() {
-	connect(&net, SIGNAL(finished(QNetworkReply*)),
-			this, SLOT(gotDoc(QNetworkReply*)));
 }
 
 void ControlPoint::listen() {
@@ -51,26 +50,17 @@ void ControlPoint::handleReply(QByteArray data) {
 	QHttpResponseHeader h(data.data());
 	if (h.statusCode()!=200) return;
 
-	QString loc = h.value("location");
-	qDebug()<<"getting "<<loc;
-	net.get(QNetworkRequest(loc));
+	QUrl loc = h.value("location");
+	connect(http.get(loc), SIGNAL(xml(QUrl,QDomDocument)),
+			this, SLOT(gotDoc(QUrl,QDomDocument)));
 }
 
-void ControlPoint::gotDoc(QNetworkReply* reply) {
-	if (reply->error()) {
-		qDebug()<<"failed downloading "<<reply->url();
-	}
-	QDomDocument doc;
-	bool ok = doc.setContent(reply->readAll());
-	if (!ok) {
-		qDebug()<<"failed parse doc";
-		qDebug()<<doc.toString();
-	}
+void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
 	QDomNode root = doc.firstChild().nextSibling();
 	QDomNode devN = getChild(root, "device");
 	if (!devN.isNull()) {
 		try {
-			Device* dev = new Device(reply->url().toString(), devN);
+			Device* dev = new Device(url, devN);
 		} catch(UPNPException e) {
 			qDebug()<<"Failed creating device "<<e.what();
 		}

@@ -4,7 +4,7 @@
 #include "Service.hpp"
 #include <cassert>
 
-Device::Device(QString baseURL, QDomNode doc): baseURL(baseURL), doc(doc) {
+Device::Device(QUrl baseURL, QDomNode doc): baseURL(baseURL), doc(doc) {
 	type = getValue(doc, "deviceType");
 	log()<<"making device "<<type;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <QtNetwork>
+#include <QDomDocument>
 
 class QDataArray;
 class ControlPoint: public QObject {
@@ -11,7 +12,7 @@ public:
 
 public slots:
 	void read();
-	void gotDoc(QNetworkReply*);
+	void gotDoc(QUrl, QDomDocument);
 
 private:
 	QUdpSocket sock;

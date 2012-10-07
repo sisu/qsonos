@@ -1,14 +1,15 @@
 #include "Service.hpp"
 #include "Device.hpp"
 #include "xml.hpp"
+#include "Http.hpp"
 #include <cassert>
 
 Service::Service(Device& dev, QDomNode np): dev(dev), doc(np) {
 	type = getValue(doc, "serviceType");
-	actionURL = dev.baseURL + getValue(doc, "controlURL");
+	actionURL = dev.baseURL.resolved(getValue(doc, "controlURL"));
 	log()<<"making service "<<type;
 //	upnp.subscribe(this);
-//	getInfo();
+	getInfo();
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -104,9 +105,22 @@ void Service::subscribe(QObject* handler) {
 	connect(this, SIGNAL(gotEvent(ArgMap)),
 			handler, SLOT(handleEvent(ArgMap)));
 }
+#endif
+
+void Service::gotDoc(QDomDocument doc) {
+	qDebug()<<"service desc "<<type;
+	QDomNode root = doc.firstChild().nextSibling();
+	qDebug()<<root.nodeName();
+	for(QDomNode i : getChild(root, "actionList")) {
+		actions.append(Action(i));
+	}
+}
 
 void Service::getInfo() {
-	QString url = dev.baseURL + getValue(doc, "SCPDURL");
+	QUrl url = dev.baseURL.resolved(getValue(doc, "SCPDURL"));
+	connect(http.get(url), SIGNAL(xml(QDomDocument)),
+			this, SLOT(gotDoc(QDomDocument)));
+#if 0
 	IXML_Document* desc;
 	log()<<"loading service scpd"<<url;
 	int r = UpnpDownloadXmlDoc(qPrintable(url), &desc);
@@ -121,15 +135,5 @@ void Service::getInfo() {
 	}
 	log()<<"got scpd";
 
-	QDomNode root = desc->n.firstChild;
-#if 0
-	for(QDomNode i = getChild(root, "serviceStateTable")->firstChild; i; i=i->nextSibling) {
-		QDomNode j = i->firstChild;
-	}
 #endif
-	for(QDomNode i = getChild(root, "actionList")->firstChild; i; i=i->nextSibling) {
-		actions.append(Action(i));
-//		log()<<"action"<<actions.back().name;
-	}
 }
-#endif

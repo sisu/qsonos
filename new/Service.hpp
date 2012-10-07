@@ -2,6 +2,7 @@
 #include "Action.hpp"
 #include "common.hpp"
 #include <QObject>
+#include <QUrl>
 class Device;
 
 class Service: public QObject {
@@ -43,8 +44,11 @@ public:
 	QString type;
 	ArgMap stateVars;
 	QList<Action> actions;
-	QString actionURL;
+	QUrl actionURL;
 	ArgMap defaultParams;
+
+public slots:
+	void gotDoc(QDomDocument doc);
 
 signals:
 	void gotEvent(ArgMap vars);
