@@ -47,10 +47,15 @@ void ControlPoint::read() {
 	}
 }
 void ControlPoint::handleReply(QByteArray data) {
-	QHttpResponseHeader h(data.data());
-	if (h.statusCode()!=200) return;
+	ArgMap args;
+	foreach(QByteArray line, data.split('\n')) {
+		int idx = line.indexOf(':');
+		if (idx<0) continue;
+		args[line.left(idx).trimmed().toLower()] = line.right(line.size()-idx-1).trimmed();
+	}
 
-	QUrl loc = h.value("location");
+	if (!args.contains("location")) return;
+	QUrl loc = args["location"];
 	connect(http.get(loc), SIGNAL(xml(QUrl,QDomDocument)),
 			this, SLOT(gotDoc(QUrl,QDomDocument)));
 }

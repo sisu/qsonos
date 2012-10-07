@@ -9,6 +9,7 @@ HttpReply::HttpReply(QNetworkReply* reply) {
 }
 
 void HttpReply::finished() {
+	deleteLater();
 	QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 	Q_ASSERT(reply);
 //	qDebug()<<"httpreply res "<<reply->url();
