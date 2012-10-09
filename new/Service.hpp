@@ -40,7 +40,7 @@ public:
 	QString type;
 	ArgMap stateVars;
 	QList<Action> actions;
-	QMap<QString,Action> actionMap;
+	QHash<QString,Action> actionMap;
 	QUrl actionURL;
 	QUrl eventURL;
 	ArgMap defaultParams;

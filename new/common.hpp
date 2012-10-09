@@ -1,7 +1,7 @@
 #pragma once
 #include <QDebug>
 #include <QString>
-#include <QMap>
+#include <QHash>
 
 inline QDebug log() {
 	return QDebug(QtWarningMsg);
@@ -14,4 +14,4 @@ public:
 	QString error;
 };
 
-typedef QMap<QString,QString> ArgMap;
+typedef QHash<QString,QString> ArgMap;
