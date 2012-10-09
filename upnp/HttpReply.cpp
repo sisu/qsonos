@@ -14,7 +14,7 @@ void HttpReply::finished() {
 	Q_ASSERT(reply);
 //	qDebug()<<"httpreply res "<<reply->url();
 	if (reply->error()) {
-		qDebug()<<"failed receiving "<<reply->url();
+		qDebug()<<"failed receiving "<<reply->url()<<":"<<reply->errorString();
 		return;
 	}
 	emit got(reply);

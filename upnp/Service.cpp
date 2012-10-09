@@ -102,7 +102,8 @@ void Service::getInfo() {
 }
 
 void Service::subscribeRes(QNetworkReply* reply) {
-	qDebug()<<"subscribe res: "<<reply->readAll();
+	(void)reply;
+//	qDebug()<<"subscribe res: "<<reply->readAll();
 }
 
 void Service::actionRes() {
