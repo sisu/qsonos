@@ -19,10 +19,10 @@ public:
 	void subscribe(QObject* handler);
 
 	template<class...A>
-	ArgMap call(QString name, A... params) {
+	void call(QString name, A... params) {
 		ArgMap pmap;
 		setParams(pmap, params...);
-		return call(name, pmap);
+		call(name, pmap);
 	}
 	void setParams(ArgMap&) {}
 	template<class...A>

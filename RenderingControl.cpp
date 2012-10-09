@@ -10,12 +10,12 @@ RenderingControl::RenderingControl(Service& srv): service(srv) {
 }
 
 void RenderingControl::setVolume(int vol) {
-	service.action("SetVolume", "DesiredVolume", QString::number(vol));
+	service.call("SetVolume", "DesiredVolume", QString::number(vol));
 	// TODO: really get the volume after change
 	emit gotVolume(vol);
 }
 void RenderingControl::getVolume() {
-	service.actionAsync("GetVolume");
+	service.call("GetVolume");
 }
 
 void RenderingControl::gotResult(ArgMap args) {

@@ -7,6 +7,7 @@ ContentDirectory::ContentDirectory(Service& srv): service(srv) {
 }
 QList<ArgMap> ContentDirectory::getPlaylist() {
 	QList<ArgMap> res;
+#if 0
 	// libupnp fails if the server reply is not fucking tiny
 	const int count = 5;
 
@@ -34,5 +35,6 @@ QList<ArgMap> ContentDirectory::getPlaylist() {
 		if (res.size() == total)
 			break;
 	}
+#endif
 	return res;
 }

@@ -8,31 +8,32 @@ AVTransport::AVTransport(Service& srv): service(srv) {
 }
 
 void AVTransport::play() {
-	service.actionAsync("Play", "Speed", "1");
+	service.call("Play", "Speed", "1");
 }
 void AVTransport::pause() {
-	service.actionAsync("Pause");
+	service.call("Pause");
 }
 void AVTransport::stop() {
-	service.actionAsync("Stop");
+	service.call("Stop");
 }
 void AVTransport::previous() {
-	service.actionAsync("Previous");
+	service.call("Previous");
 }
 void AVTransport::next() {
-	service.actionAsync("Next");
+	service.call("Next");
 }
 void AVTransport::setTrack(int num) {
-	service.actionAsync("Seek",
+	service.call("Seek",
 			"Unit", "TRACK_NR",
 			"Target", QString::number(num+1));
 }
 
 void AVTransport::getPositionInfo() {
-	service.actionAsync("GetPositionInfo");
+	service.call("GetPositionInfo");
 }
 
 void AVTransport::handleEvent(ArgMap vars) {
+#if 0
 //	log()<<"got avtransport event"<<vars.size();
 	if (!vars.contains("LastChange")) return;
 	QString change = vars["LastChange"];
@@ -49,4 +50,5 @@ void AVTransport::handleEvent(ArgMap vars) {
 	}
 //	log()<<args;
 	emit lastChange(args);
+#endif
 }

@@ -3,6 +3,7 @@
 #include "ZonePlayer.hpp"
 #include "common.hpp"
 #include "parse.hpp"
+#include "Service.hpp"
 #include <QLabel>
 #include <QPushButton>
 #include <QToolButton>
