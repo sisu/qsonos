@@ -49,7 +49,7 @@ public:
 private slots:
 	void gotDoc(QDomDocument doc);
 	void subscribeRes(QNetworkReply*);
-	void actionRes(const QtSoapMessage&);
+	void actionRes();
 
 signals:
 	void gotEvent(ArgMap vars);

@@ -5,6 +5,7 @@
 
 class Service;
 class QDataArray;
+class Device;
 class ControlPoint: public QObject {
 	Q_OBJECT
 public:
@@ -13,6 +14,9 @@ public:
 	void discover(QString type);
 
 	void subscribe(Service& srv);
+
+signals:
+	void newDevice(Device*);
 
 public slots:
 	void read();

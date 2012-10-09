@@ -64,12 +64,12 @@ void ControlPoint::handleReply(QByteArray data) {
 }
 
 void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
-	QDomNode root = doc.firstChild().nextSibling();
+	QDomNode root = doc.documentElement();
 	QDomNode devN = getChild(root, "device");
 	if (!devN.isNull()) {
 		try {
 			Device* dev = new Device(url, devN, *this);
-			(void)dev;
+			emit newDevice(dev);
 		} catch(UPNPException e) {
 			qDebug()<<"Failed creating device "<<e.what();
 		}

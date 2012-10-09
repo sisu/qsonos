@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
 	wnd->show();
 
 	ControlPoint cp;
-//	QObject::connect(&cp, SIGNAL(newDevice(Device*)),
-//			wnd, SLOT(foundDevice(Device*)));
+	QObject::connect(&cp, SIGNAL(newDevice(Device*)),
+			wnd, SLOT(foundDevice(Device*)));
 
 	cp.listen();
 	cp.discover("urn:schemas-upnp-org:device:ZonePlayer:1");

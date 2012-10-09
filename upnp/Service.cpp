@@ -16,8 +16,9 @@ Service::Service(Device& dev, QDomNode np): dev(dev), doc(np) {
 	getInfo();
 	dev.cp.subscribe(*this);
 
-	connect(&soap, SIGNAL(responseReady(const QtSoapMessage&)),
-			this, SLOT(actionRes(const QtSoapMessage&)));
+	soap.setHost(actionURL.host(), 0, actionURL.port());
+	connect(&soap, SIGNAL(responseReady()),
+			this, SLOT(actionRes()));
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -77,13 +78,15 @@ void Service::subscribe(QObject* handler) {
 }
 void Service::call(QString aname, ArgMap& args) {
 	QtSoapMessage msg = makeAction(aname, args);
-	soap.submitRequest(msg, actionURL.toString());
+	qDebug()<<"making call to"<<actionURL;
+	qDebug()<<msg.toXmlString(1);
+	soap.setAction("\""+type+"#"+aname+"\"");
+	soap.submitRequest(msg, actionURL.path());
 }
 
 void Service::gotDoc(QDomDocument doc) {
 //	qDebug()<<"service desc "<<type;
-	QDomNode root = doc.firstChild().nextSibling();
-	qDebug()<<root.nodeName();
+	QDomNode root = doc.documentElement();
 	for(QDomNode i : getChild(root, "actionList")) {
 		Action a(i);
 		actions.append(a);
@@ -101,6 +104,11 @@ void Service::subscribeRes(QNetworkReply* reply) {
 	qDebug()<<"subscribe res: "<<reply->readAll();
 }
 
-void Service::actionRes(const QtSoapMessage& msg) {
-	qDebug()<<"action result :\n"<<msg.toXmlString(1);
+void Service::actionRes() {
+	QtSoapMessage msg = soap.getResponse();
+	if (msg.isFault()) {
+		qDebug()<<"action failed: "<<msg.faultString().toString();
+	}
+	qDebug()<<"action result:";
+	qDebug()<<msg.toXmlString(1);
 }

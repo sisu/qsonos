@@ -10,11 +10,11 @@ HttpSession::HttpSession(QTcpSocket* socket): socket(socket) {
 }
 
 void HttpSession::onData() {
-	qDebug()<<"data from socket:";
+//	qDebug()<<"data from socket:";
 //	qDebug()<<socket->readAll();
 	while(1) {
 		if (waitingData) {
-			qDebug()<<"trying to get "<<waitingData;
+//			qDebug()<<"trying to get "<<waitingData;
 			int idx = curData.size()-waitingData;
 			qint64 get = socket->read(curData.data()+idx, waitingData);
 			Q_ASSERT(get>=0);
@@ -25,7 +25,7 @@ void HttpSession::onData() {
 			}
 		} else if (socket->canReadLine()) {
 			QByteArray line = socket->readLine().trimmed();
-			qDebug()<<line;
+//			qDebug()<<line;
 			if (line.isEmpty() && headers.contains("content-length")) {
 				waitingData = headers["content-length"].toInt();
 				curData.resize(waitingData);
