@@ -46,9 +46,10 @@ public:
 	ArgMap defaultParams;
 	QtSoapHttpTransport soap;
 
-public slots:
+private slots:
 	void gotDoc(QDomDocument doc);
 	void subscribeRes(QNetworkReply*);
+	void actionRes(const QtSoapMessage&);
 
 signals:
 	void gotEvent(ArgMap vars);

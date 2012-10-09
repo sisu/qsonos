@@ -15,6 +15,9 @@ Service::Service(Device& dev, QDomNode np): dev(dev), doc(np) {
 //	upnp.subscribe(this);
 	getInfo();
 	dev.cp.subscribe(*this);
+
+	connect(&soap, SIGNAL(responseReady(const QtSoapMessage&)),
+			this, SLOT(actionRes(const QtSoapMessage&)));
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -96,4 +99,8 @@ void Service::getInfo() {
 
 void Service::subscribeRes(QNetworkReply* reply) {
 	qDebug()<<"subscribe res: "<<reply->readAll();
+}
+
+void Service::actionRes(const QtSoapMessage& msg) {
+	qDebug()<<"action result :\n"<<msg.toXmlString(1);
 }
