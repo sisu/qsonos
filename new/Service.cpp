@@ -5,6 +5,7 @@
 #include "ControlPoint.hpp"
 #include <cassert>
 #include <QNetworkReply>
+#include <QtSoapMessage>
 
 Service::Service(Device& dev, QDomNode np): dev(dev), doc(np) {
 	type = getValue(doc, "serviceType");
@@ -29,8 +30,7 @@ void Service::actionResult(ArgMap res) {
 	emit gotResult(res);
 }
 
-#if 0
-IXML_Document* Service::makeAction(QString name, ArgMap& params) const {
+QtSoapMessage Service::makeAction(QString name, ArgMap& params) const {
 	Action action = getAction(name);
 	foreach(QString arg, action.inArgs) {
 		if (!params.contains(arg)) {
@@ -43,50 +43,13 @@ IXML_Document* Service::makeAction(QString name, ArgMap& params) const {
 		if (!action.inArgs.contains(arg))
 			throw UPNPException("Extra argument for action "+name+" : "+arg);
 	}
-	log()<<"action"<<name;
-	IXML_Document* anode=0;
-	if (params.empty()) {
-		anode = UpnpMakeAction(qPrintable(name), qPrintable(type), 0, 0);
-	} else {
-		foreach(QString arg, params.keys()) {
-			int r = UpnpAddToAction(&anode,
-					qPrintable(name),
-					qPrintable(type),
-					qPrintable(arg),
-					qPrintable(params[arg]));
-			assert(!r);
-		}
-	}
-	return anode;
+	QtSoapMessage msg;
+	msg.setMethod(name, type);
+	foreach(QString arg, params.keys())
+		msg.addMethodArgument(arg, "", params[arg]);
+	return msg;
 }
-ArgMap Service::action(QString name, ArgMap& params) {
-	IXML_Document* anode = makeAction(name, params);
-	IXML_Document* resp;
-	int r = UpnpSendAction(upnp.handle,
-			qPrintable(actionURL),
-			qPrintable(type),
-			0,
-			anode,
-			&resp);
-	if (r) {
-		throw UPNPException("Action "+name+" failed:\n"+ixmlPrintDocument(anode)+"\n"+ixmlPrintDocument(resp));
-	}
-//	log()<<ixmlPrintDocument(anode);
-//	log()<<"sent action"<<r<<actionURL<<type;
-//	if (resp) log()<<ixmlPrintDocument(resp);
-
-	return parseVars(resp);
-}
-void Service::actionAsync(QString name, ArgMap& params) {
-	IXML_Document* anode = makeAction(name, params);
-	UpnpSendActionAsync(upnp.handle,
-			qPrintable(actionURL),
-			qPrintable(type),
-			0,
-			anode,
-			upnpCallback,
-			&upnp);
-}
+#if 0
 ArgMap Service::parseActionResult(IXML_Document* doc) {
 	ArgMap res;
 	if (doc) {
@@ -96,12 +59,12 @@ ArgMap Service::parseActionResult(IXML_Document* doc) {
 	}
 	return res;
 }
+#endif
 
-const Action& Service::getAction(QString name) const {
-	for(int i=0; i<actions.size(); ++i) {
-		const Action& a = actions[i];
-		if (a.name==name) return a;
-	}
+Action Service::getAction(QString name) const {
+	auto it = actionMap.find(name);
+	if (it!=actionMap.end())
+		return it.value();
 	throw UPNPException("Action "+name+" not found");
 }
 
@@ -109,14 +72,19 @@ void Service::subscribe(QObject* handler) {
 	connect(this, SIGNAL(gotEvent(ArgMap)),
 			handler, SLOT(handleEvent(ArgMap)));
 }
-#endif
+void Service::call(QString aname, ArgMap& args) {
+	QtSoapMessage msg = makeAction(aname, args);
+	soap.submitRequest(msg, actionURL.toString());
+}
 
 void Service::gotDoc(QDomDocument doc) {
 //	qDebug()<<"service desc "<<type;
 	QDomNode root = doc.firstChild().nextSibling();
 	qDebug()<<root.nodeName();
 	for(QDomNode i : getChild(root, "actionList")) {
-		actions.append(Action(i));
+		Action a(i);
+		actions.append(a);
+		actionMap.insert(a.name, a);
 	}
 }
 

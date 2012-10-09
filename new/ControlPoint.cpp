@@ -77,6 +77,8 @@ void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
 }
 
 void ControlPoint::subscribe(Service& srv) {
+	// XXX: Qt sets accept-language header, which is prohibited in UPnP-1.1
+	// and there is currently no way to disable it.
 	qDebug()<<"subscribing"<<srv.eventURL;
 	QNetworkRequest req(srv.eventURL);
 	QString host = srv.dev.baseURL.host()+":"+QString::number(srv.dev.baseURL.port());
@@ -84,6 +86,7 @@ void ControlPoint::subscribe(Service& srv) {
 	QString addr = interface.addressEntries()[0].ip().toString() + ":" + QString::number(httpServer.serverPort());
 	req.setRawHeader("CALLBACK", ("<http://"+addr+"/0>").toUtf8());
 	req.setRawHeader("NT", "upnp:event");
+	req.setRawHeader("Accept-Language", QByteArray());
 	connect(http.custom(req, "SUBSCRIBE"), SIGNAL(got(QNetworkReply*)),
 			&srv, SLOT(subscribeRes(QNetworkReply*)));
 

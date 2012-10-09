@@ -3,8 +3,10 @@
 #include "common.hpp"
 #include <QObject>
 #include <QUrl>
+#include <QtSoapHttpTransport>
 class Device;
 class QNetworkReply;
+class QtSoapMessage;
 
 class Service: public QObject {
 	Q_OBJECT
@@ -14,21 +16,13 @@ public:
 	void processEvent(ArgMap vchanges);
 	void actionResult(ArgMap res);
 
-	ArgMap action(QString name, ArgMap& params);
-	void actionAsync(QString name, ArgMap& params);
 	void subscribe(QObject* handler);
 
 	template<class...A>
-	ArgMap action(QString name, A... params) {
+	ArgMap call(QString name, A... params) {
 		ArgMap pmap;
 		setParams(pmap, params...);
-		return action(name, pmap);
-	}
-	template<class...A>
-	void actionAsync(QString name, A... params) {
-		ArgMap pmap;
-		setParams(pmap, params...);
-		return actionAsync(name, pmap);
+		return call(name, pmap);
 	}
 	void setParams(ArgMap&) {}
 	template<class...A>
@@ -37,17 +31,20 @@ public:
 		setParams(pmap, params...);
 	}
 //	static ArgMap parseActionResult(IXML_Document* doc);
+	void call(QString action, ArgMap& args);
 
-	const Action& getAction(QString name) const;
+	Action getAction(QString name) const;
 
 	Device& dev;
 	QDomNode doc;
 	QString type;
 	ArgMap stateVars;
 	QList<Action> actions;
+	QMap<QString,Action> actionMap;
 	QUrl actionURL;
 	QUrl eventURL;
 	ArgMap defaultParams;
+	QtSoapHttpTransport soap;
 
 public slots:
 	void gotDoc(QDomDocument doc);
@@ -59,5 +56,5 @@ signals:
 
 private:
 	void getInfo();
-//	IXML_Document* makeAction(QString name, ArgMap& params) const;
+	QtSoapMessage makeAction(QString name, ArgMap& params) const;
 };
