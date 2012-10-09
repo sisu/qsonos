@@ -77,6 +77,7 @@ void Service::subscribe(QObject* handler) {
 			handler, SLOT(handleEvent(ArgMap)));
 }
 void Service::call(QString aname, ArgMap& args) {
+	QtSoapNamespaces::instance().registerNamespace("u", type);
 	QtSoapMessage msg = makeAction(aname, args);
 	qDebug()<<"making call to"<<actionURL;
 	qDebug()<<msg.toXmlString(1);
@@ -107,7 +108,7 @@ void Service::subscribeRes(QNetworkReply* reply) {
 void Service::actionRes() {
 	QtSoapMessage msg = soap.getResponse();
 	if (msg.isFault()) {
-		qDebug()<<"action failed: "<<msg.faultString().toString();
+		qDebug()<<"action failed: "<<msg.faultString().toString()<<";"<<msg.faultCode()<<";"<<msg.faultDetail().toString();
 	}
 	qDebug()<<"action result:";
 	qDebug()<<msg.toXmlString(1);
