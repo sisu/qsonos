@@ -69,7 +69,7 @@ Action Service::getAction(QString name) const {
 	auto it = actionMap.find(name);
 	if (it!=actionMap.end())
 		return it.value();
-	throw UPNPException("Action "+name+" not found");
+	throw UPNPException("Action "+name+" not found from service "+type);
 }
 
 void Service::subscribe(QObject* handler) {
@@ -102,8 +102,7 @@ void Service::getInfo() {
 }
 
 void Service::subscribeRes(QNetworkReply* reply) {
-	(void)reply;
-//	qDebug()<<"subscribe res: "<<reply->readAll();
+	qDebug()<<"sid: "<<reply->rawHeader("sid");
 }
 
 void Service::actionRes() {

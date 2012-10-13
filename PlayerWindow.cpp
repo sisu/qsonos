@@ -107,13 +107,15 @@ void PlayerWindow::connectToolbar() {
 	}
 }
 void PlayerWindow::foundDevice(Device* dev) {
+	ZonePlayer* pl;
 	try {
-		ZonePlayer* pl = new ZonePlayer(*dev);
+		pl = new ZonePlayer(*dev);
 		log()<<"found zoneplayer";
-		setPlayer(pl);
 	} catch(const UPNPException& e) {
 		log()<<"not valid zoneplayer:"<<e.what();
+		return;
 	}
+	setPlayer(pl);
 }
 
 static QString formatTime(int sec) {
