@@ -11,7 +11,7 @@ namespace {
 
 	QNetworkInterface getInterface() {
 		foreach(QNetworkInterface i, QNetworkInterface::allInterfaces()) {
-			if (!(i.flags() & QNetworkInterface::IsLoopBack))
+			if (!(i.flags() & QNetworkInterface::IsLoopBack) && !i.addressEntries().empty())
 				return i;
 		}
 		throw 0;
