@@ -18,4 +18,5 @@ private slots:
 	void finished();
 
 private:
+	QNetworkReply* reply;
 };

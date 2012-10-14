@@ -3,7 +3,7 @@
 #include <QDomDocument>
 #include <QDebug>
 
-HttpReply::HttpReply(QNetworkReply* reply) {
+HttpReply::HttpReply(QNetworkReply* reply): reply(reply) {
 	connect(reply, SIGNAL(finished()),
 			this, SLOT(finished()));
 }

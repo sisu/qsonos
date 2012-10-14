@@ -15,3 +15,5 @@ QT += network xml
 CONFIG += debug
 
 include(upnp/upnp.pri)
+
+OBJECTS_DIR=obj
