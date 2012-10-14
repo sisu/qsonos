@@ -111,11 +111,11 @@ void PlayerWindow::foundDevice(Device* dev) {
 	try {
 		pl = new ZonePlayer(*dev);
 		log()<<"found zoneplayer";
+		setPlayer(pl);
 	} catch(const UPNPException& e) {
 		log()<<"not valid zoneplayer:"<<e.what();
 		return;
 	}
-	setPlayer(pl);
 }
 
 static QString formatTime(int sec) {

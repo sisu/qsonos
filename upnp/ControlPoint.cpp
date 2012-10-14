@@ -4,6 +4,7 @@
 #include "Http.hpp"
 #include "Service.hpp"
 #include <QDomDocument>
+#include <QApplication>
 
 namespace {
 	const QHostAddress mAddr("239.255.255.250");
@@ -59,21 +60,20 @@ void ControlPoint::handleReply(QByteArray data) {
 
 	if (!args.contains("location")) return;
 	QUrl loc = args["location"];
-	connect(http.get(loc), SIGNAL(xml(QUrl,QDomDocument)),
+	connect(Http::get(loc), SIGNAL(xml(QUrl,QDomDocument)),
 			this, SLOT(gotDoc(QUrl,QDomDocument)));
 }
 
 void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
-	QDomNode root = doc.documentElement();
-	QDomNode devN = getChild(root, "device");
-	if (!devN.isNull()) {
-		try {
-			Device* dev = new Device(url, devN, *this);
-			emit newDevice(dev);
-		} catch(UPNPException e) {
-			qDebug()<<"Failed creating device "<<e.what();
-		}
-	}
+	QDomNode devN = getChild(doc.documentElement(), "device");
+	Device* dev = new Device(url, devN, *this);
+	QThread* make = new QThread;
+	dev->moveToThread(make);
+	connect(make, SIGNAL(started()),
+			dev, SLOT(init()));
+	connect(dev, SIGNAL(deviceReady()),
+			this, SLOT(addDevice()));
+	make->start();
 }
 
 void ControlPoint::subscribe(Service& srv) {
@@ -87,9 +87,19 @@ void ControlPoint::subscribe(Service& srv) {
 	req.setRawHeader("CALLBACK", ("<http://"+addr+"/0>").toUtf8());
 	req.setRawHeader("NT", "upnp:event");
 	req.setRawHeader("Accept-Language", QByteArray());
-	connect(http.custom(req, "SUBSCRIBE"), SIGNAL(got(QNetworkReply*)),
+	connect(Http::custom(req, "SUBSCRIBE"), SIGNAL(got(QNetworkReply*)),
 			&srv, SLOT(subscribeRes(QNetworkReply*)));
 
 	foreach(QByteArray x, req.rawHeaderList())
 		qDebug()<<x<<":"<<req.rawHeader(x);
+}
+
+void ControlPoint::addDevice(Device& dev) {
+	emit newDevice(&dev);
+}
+void ControlPoint::addDevice() {
+	Device* dev = qobject_cast<Device*>(sender());
+	Q_ASSERT(dev);
+//	dev->moveToThread(QApplication::instance()->thread());
+	emit newDevice(dev);
 }

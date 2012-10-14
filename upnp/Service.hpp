@@ -12,6 +12,7 @@ class Service: public QObject {
 	Q_OBJECT
 public:
 	Service(Device&, QDomNode);
+	void init();
 
 	void processEvent(ArgMap vchanges);
 	void actionResult(ArgMap res);

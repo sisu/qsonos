@@ -8,6 +8,7 @@ class HttpReply: public QObject {
 	Q_OBJECT
 public:
 	HttpReply(QNetworkReply*);
+	void wait();
 
 signals:
 	void got(QNetworkReply*);

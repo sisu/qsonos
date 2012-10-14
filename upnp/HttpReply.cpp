@@ -2,6 +2,8 @@
 #include <QNetworkReply>
 #include <QDomDocument>
 #include <QDebug>
+#include <QApplication>
+#include <QEventLoop>
 
 HttpReply::HttpReply(QNetworkReply* reply): reply(reply) {
 	connect(reply, SIGNAL(finished()),
@@ -10,9 +12,7 @@ HttpReply::HttpReply(QNetworkReply* reply): reply(reply) {
 
 void HttpReply::finished() {
 	deleteLater();
-	QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
-	Q_ASSERT(reply);
-//	qDebug()<<"httpreply res "<<reply->url();
+	qDebug()<<"httpreply res "<<reply->url();
 	if (reply->error()) {
 		qDebug()<<"failed receiving "<<reply->url()<<":"<<reply->errorString();
 		return;
@@ -21,13 +21,20 @@ void HttpReply::finished() {
 	if (receivers(SIGNAL(xml(QDomDocument)))
 		|| receivers(SIGNAL(xml(QUrl,QDomDocument)))) {
 		QDomDocument doc;
-		bool ok = doc.setContent(reply->readAll());
+		QByteArray data = reply->readAll();
+		bool ok = doc.setContent(data);
 		if (ok) {
 			emit xml(doc);
 			emit xml(reply->url(), doc);
 		} else {
 			qDebug()<<"failed parsing doc";
-			qDebug()<<doc.toString();
+			qDebug()<<data;
 		}
+	}
+}
+
+void HttpReply::wait() {
+	while(!reply->isFinished()) {
+		QApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents | QEventLoop::ExcludeUserInputEvents);
 	}
 }

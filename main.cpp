@@ -5,11 +5,13 @@
 #include <cassert>
 #include <QApplication>
 #include <QMetaType>
+#include <QDomDocument>
 
 PlayerWindow* wnd;
 
 int main(int argc, char* argv[]) {
 	qRegisterMetaType<ArgMap>("ArgMap");
+	qRegisterMetaType<QDomDocument>("QDomDocument");
 	QApplication app(argc,argv);
 	app.setOrganizationName("qsonos");
 	app.setApplicationName("qsonos");

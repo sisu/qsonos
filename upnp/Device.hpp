@@ -1,4 +1,5 @@
 #pragma once
+#include "Http.hpp"
 #include <QList>
 #include <QString>
 #include <QDomNode>
@@ -6,9 +7,10 @@
 class Service;
 class ControlPoint;
 
-class Device {
+class Device: public QObject {
+	Q_OBJECT
 public:
-	Device(QUrl baseURL, QDomNode doc, ControlPoint& cp);
+	Device(QUrl baseURL, QDomNode doc, ControlPoint& cp, Device* parent=0);
 
 	Device& getDeviceByType(QString type);
 	Service& getServiceByType(QString type);
@@ -19,4 +21,10 @@ public:
 	QList<Device*> devices;
 	QList<Service*> services;
 	ControlPoint& cp;
+
+public slots:
+	void init();
+
+signals:
+	void deviceReady();
 };

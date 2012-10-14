@@ -7,18 +7,20 @@
 #include <QNetworkReply>
 #include <QtSoapMessage>
 
-Service::Service(Device& dev, QDomNode np): dev(dev), doc(np) {
+Service::Service(Device& dev, QDomNode np):
+	QObject(&dev), dev(dev), doc(np) {
 	type = getValue(doc, "serviceType");
 	actionURL = dev.baseURL.resolved(getValue(doc, "controlURL"));
 	eventURL = dev.baseURL.resolved(getValue(doc, "eventSubURL"));
 	log()<<"making service "<<type;
-//	upnp.subscribe(this);
-	getInfo();
-	dev.cp.subscribe(*this);
 
 	soap.setHost(actionURL.host(), 0, actionURL.port());
 	connect(&soap, SIGNAL(responseReady()),
 			this, SLOT(actionRes()));
+}
+void Service::init() {
+	getInfo();
+//	dev.cp.subscribe(*this);
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -86,7 +88,7 @@ void Service::call(QString aname, ArgMap& args) {
 }
 
 void Service::gotDoc(QDomDocument doc) {
-//	qDebug()<<"service desc "<<type;
+	qDebug()<<"service desc "<<type;
 	QDomNode root = doc.documentElement();
 	for(QDomNode i : getChild(root, "actionList")) {
 		Action a(i);
@@ -97,8 +99,10 @@ void Service::gotDoc(QDomDocument doc) {
 
 void Service::getInfo() {
 	QUrl url = dev.baseURL.resolved(getValue(doc, "SCPDURL"));
-	connect(http.get(url), SIGNAL(xml(QDomDocument)),
+	HttpReply* reply = Http::get(url);
+	connect(reply, SIGNAL(xml(QDomDocument)),
 			this, SLOT(gotDoc(QDomDocument)));
+	reply->wait();
 }
 
 void Service::subscribeRes(QNetworkReply* reply) {

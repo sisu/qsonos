@@ -30,4 +30,8 @@ private:
 	QNetworkInterface interface;
 
 	void handleReply(QByteArray);
+	void addDevice(Device&);
+
+private slots:
+	void addDevice();
 };
