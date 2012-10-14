@@ -6,6 +6,7 @@
 #include <QEventLoop>
 
 HttpReply::HttpReply(QNetworkReply* reply): reply(reply) {
+	reply->setParent(this);
 	connect(reply, SIGNAL(finished()),
 			this, SLOT(finished()));
 }

@@ -20,7 +20,7 @@ Service::Service(Device& dev, QDomNode np):
 }
 void Service::init() {
 	getInfo();
-//	dev.cp.subscribe(*this);
+	dev.cp.subscribe(*this);
 }
 
 void Service::processEvent(ArgMap vchanges) {
@@ -85,7 +85,7 @@ void Service::call(QString aname, ArgMap& args) {
 	QtSoapNamespaces::instance().registerNamespace("u", type);
 	QtSoapMessage msg = makeAction(aname, args);
 	qDebug()<<"making call to"<<actionURL;
-	qDebug()<<msg.toXmlString(1);
+//	qDebug()<<msg.toXmlString(1);
 	soap.setAction("\""+type+"#"+aname+"\"");
 	soap.submitRequest(msg, actionURL.path());
 }
