@@ -27,7 +27,7 @@ void Service::processEvent(ArgMap vchanges) {
 //	log()<<"event\n"<<ixmlPrintDocument(doc);
 	log()<<"event";
 	foreach(QString nm, vchanges.keys()) {
-//		log()<<nm<<vchanges[nm];
+		qDebug()<<nm<<vchanges[nm];
 		stateVars[nm] = vchanges[nm];
 	}
 	emit gotEvent(vchanges);

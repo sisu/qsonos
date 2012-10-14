@@ -1,5 +1,7 @@
 #include "HttpSession.hpp"
 #include "HttpServer.hpp"
+#include "xml.hpp"
+#include "Service.hpp"
 #include <QTcpSocket>
 
 HttpSession::HttpSession(QTcpSocket* socket, HttpServer& server):
@@ -20,13 +22,14 @@ void HttpSession::onData() {
 			int idx = curData.size()-waitingData;
 			qint64 get = socket->read(curData.data()+idx, waitingData);
 			Q_ASSERT(get>=0);
+			if (get==0) break;
 			waitingData -= get;
 			if (waitingData==0) {
 				sendEvent();
 			}
 		} else if (socket->canReadLine()) {
 			QByteArray line = socket->readLine().trimmed();
-			qDebug()<<line;
+//			qDebug()<<line;
 			if (line.isEmpty() && headers.contains("content-length")) {
 				waitingData = headers["content-length"].toInt();
 				curData.resize(waitingData);
@@ -39,15 +42,35 @@ void HttpSession::onData() {
 	}
 }
 
-void HttpSession::sendEvent() {
-	qDebug()<<"http data:";
-	qDebug()<<curData;
-	if (!headers.contains("SID")) {
-		qDebug()<<"Missing SID in headers"<<headers;
+static ArgMap parseEvent(QByteArray str) {
+	ArgMap map;
+	QDomDocument doc;
+	bool ok = doc.setContent(str);
+	if (!ok) {
+		return map;
 	}
-	QString sid = headers["SID"];
+	QString pname = "e:property";
+	for(QDomNode i : doc.documentElement()) {
+		if (i.nodeName()!=pname) {
+			qDebug()<<"event node"<<i.nodeName();
+			continue;
+		}
+		QDomNode j = i.firstChild();
+		map[j.nodeName()] = j.firstChild().nodeValue();
+	}
+	return map;
+}
+void HttpSession::sendEvent() {
+//	qDebug()<<"http data:";
+//	qDebug()<<curData;
+	if (!headers.contains("sid")) {
+		qDebug()<<"Missing SID in headers"<<headers;
+		return;
+	}
+	QString sid = headers["sid"];
 	if (server.handlers.contains(sid)) {
-		qDebug()<<"handler found";
+//		qDebug()<<"handler found";
+		server.handlers[sid]->processEvent(parseEvent(curData));
 	} else {
 		qDebug()<<"Missing handler for SID"<<sid;
 	}
