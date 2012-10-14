@@ -30,8 +30,9 @@ void PlayerWindow::setPlayer(ZonePlayer* pl) {
 
 	connectToolbar();
 
-	QList<ArgMap> plist = player->mediaServer.contentDir.getPlaylist();
-	playlist->setList(plist);
+	playlist->setPlayer(pl);
+//	QList<ArgMap> plist = player->mediaServer.contentDir.getPlaylist();
+//	playlist->setList(plist);
 
 	AVTransport* avtransport = &player->mediaRenderer.avtransport;
 	connect(avtransport, SIGNAL(lastChange(ArgMap)),

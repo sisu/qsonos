@@ -1,6 +1,8 @@
 #include "PlaylistWidget.hpp"
 #include "ZonePlayer.hpp"
 #include "PlayerWindow.hpp"
+#include "Service.hpp"
+#include "parse.hpp"
 #include <QTreeWidgetItem>
 #include <QKeyEvent>
 
@@ -51,6 +53,11 @@ void PlaylistWidget::handleChange(ArgMap args) {
 void PlaylistWidget::handleResult(ArgMap res) {
 	if (res.contains("Track"))
 		setActiveTrack(res["Track"].toInt()-1);
+	else if (res.contains("NumberReturned")) {
+		int num = res["NumberReturned"].toInt();
+		int total = res["TotalMatches"].toInt();
+		fillPlaylist(parsePlaylist(res["Result"]), res["TotalMatches"].toInt());
+	}
 }
 void PlaylistWidget::setActiveTrack(int idx) {
 	if (idx==activeIdx) return;
@@ -69,4 +76,27 @@ void PlaylistWidget::setActiveTrack(int idx) {
 		item->setFont(i, font);
 	}
 	activeIdx = idx;
+}
+
+void PlaylistWidget::setPlayer(ZonePlayer* pl) {
+	zone = pl;
+	ContentDirectory& dir = pl->mediaServer.contentDir;
+	connect(&dir.service, SIGNAL(gotResult(ArgMap)),
+			this, SLOT(handleResult(ArgMap)));
+	dir.getPlaylist(0, 100);
+}
+
+void PlaylistWidget::fillPlaylist(QList<ArgMap> items, int total) {
+	// FIXME: make sure that indices are correct
+	QString attrs[] = {"originalTrackNumber", "title", "creator", "album"};
+	foreach(ArgMap i, items) {
+		QTreeWidgetItem* x = new QTreeWidgetItem(this);
+		for(int j=0; j<columnCount(); ++j)
+			x->setText(j, i[attrs[j]]);
+	}
+	int curCount = topLevelItemCount();
+	if (curCount < total) {
+		ContentDirectory& dir = zone->mediaServer.contentDir;
+		dir.getPlaylist(curCount, 100);
+	}
 }
