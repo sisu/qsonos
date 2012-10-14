@@ -15,6 +15,7 @@ public:
 
 	void subscribe(Service& srv);
 
+	HttpServer httpServer;
 signals:
 	void newDevice(Device*);
 
@@ -26,7 +27,6 @@ private:
 	QUdpSocket sock;
 	QNetworkAccessManager net;
 	QString search;
-	HttpServer httpServer;
 	QNetworkInterface interface;
 
 	void handleReply(QByteArray);

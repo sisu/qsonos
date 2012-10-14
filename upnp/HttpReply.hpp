@@ -20,4 +20,5 @@ private slots:
 
 private:
 	QNetworkReply* reply;
+	bool noDelete;
 };

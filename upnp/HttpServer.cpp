@@ -13,6 +13,6 @@ void HttpServer::start() {
 void HttpServer::getConnection() {
 	while(hasPendingConnections()) {
 		QTcpSocket* sock = nextPendingConnection();
-		new HttpSession(sock);
+		new HttpSession(sock, *this);
 	}
 }

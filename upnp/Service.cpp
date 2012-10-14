@@ -109,7 +109,9 @@ void Service::getInfo() {
 }
 
 void Service::subscribeRes(QNetworkReply* reply) {
-	qDebug()<<"sid: "<<reply->rawHeader("sid");
+//	qDebug()<<"sid: "<<reply->rawHeader("sid");
+	QString sid = reply->rawHeader("sid");
+	dev.cp.httpServer.handlers[sid] = this;
 }
 
 void Service::actionRes() {

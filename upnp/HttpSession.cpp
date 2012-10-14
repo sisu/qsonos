@@ -1,7 +1,9 @@
 #include "HttpSession.hpp"
+#include "HttpServer.hpp"
 #include <QTcpSocket>
 
-HttpSession::HttpSession(QTcpSocket* socket): socket(socket) {
+HttpSession::HttpSession(QTcpSocket* socket, HttpServer& server):
+	socket(socket), server(server) {
 	waitingData = 0;
 	connect(socket, SIGNAL(readyRead()),
 			this, SLOT(onData()));
@@ -20,12 +22,11 @@ void HttpSession::onData() {
 			Q_ASSERT(get>=0);
 			waitingData -= get;
 			if (waitingData==0) {
-				qDebug()<<"http data:";
-				qDebug()<<curData;
+				sendEvent();
 			}
 		} else if (socket->canReadLine()) {
 			QByteArray line = socket->readLine().trimmed();
-//			qDebug()<<line;
+			qDebug()<<line;
 			if (line.isEmpty() && headers.contains("content-length")) {
 				waitingData = headers["content-length"].toInt();
 				curData.resize(waitingData);
@@ -35,5 +36,19 @@ void HttpSession::onData() {
 				headers[line.left(idx).trimmed().toLower()] = line.mid(idx+1).trimmed();
 			}
 		} else break;
+	}
+}
+
+void HttpSession::sendEvent() {
+	qDebug()<<"http data:";
+	qDebug()<<curData;
+	if (!headers.contains("SID")) {
+		qDebug()<<"Missing SID in headers"<<headers;
+	}
+	QString sid = headers["SID"];
+	if (server.handlers.contains(sid)) {
+		qDebug()<<"handler found";
+	} else {
+		qDebug()<<"Missing handler for SID"<<sid;
 	}
 }

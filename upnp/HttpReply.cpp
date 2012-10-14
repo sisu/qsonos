@@ -5,14 +5,14 @@
 #include <QApplication>
 #include <QEventLoop>
 
-HttpReply::HttpReply(QNetworkReply* reply): reply(reply) {
+HttpReply::HttpReply(QNetworkReply* reply): reply(reply), noDelete(0) {
 	reply->setParent(this);
 	connect(reply, SIGNAL(finished()),
 			this, SLOT(finished()));
 }
 
 void HttpReply::finished() {
-	deleteLater();
+	if (!noDelete) deleteLater();
 	qDebug()<<"httpreply res "<<reply->url();
 	if (reply->error()) {
 		qDebug()<<"failed receiving "<<reply->url()<<":"<<reply->errorString();
@@ -35,7 +35,9 @@ void HttpReply::finished() {
 }
 
 void HttpReply::wait() {
+	noDelete = 1;
 	while(!reply->isFinished()) {
 		QApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents | QEventLoop::AllEvents);
 	}
+	deleteLater();
 }

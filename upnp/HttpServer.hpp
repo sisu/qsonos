@@ -1,5 +1,8 @@
 #pragma once
 #include <QTcpServer>
+#include <QMap>
+#include <QString>
+class Service;
 
 class HttpServer: public QTcpServer {
 	Q_OBJECT
@@ -8,6 +11,7 @@ public:
 
 	void start();
 
+	QMap<QString,Service*> handlers;
 private slots:
 	void getConnection();
 };
