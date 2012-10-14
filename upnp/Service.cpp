@@ -129,7 +129,7 @@ void Service::actionRes() {
 	ArgMap outArgs;
 	foreach(QString arg, action.outArgs) {
 		const QtSoapType& val = res[arg];
-		qDebug()<<arg<<val.value().toString();
+//		qDebug()<<arg<<val.value().toString();
 		outArgs[arg] = val.value().toString();
 	}
 	emit gotResult(outArgs);
