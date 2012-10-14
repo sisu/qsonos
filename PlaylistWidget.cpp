@@ -55,6 +55,7 @@ void PlaylistWidget::handleResult(ArgMap res) {
 void PlaylistWidget::setActiveTrack(int idx) {
 	if (idx==activeIdx) return;
 	QTreeWidgetItem* item = topLevelItem(idx);
+	if (!item) return;
 	setCurrentItem(item);
 	QFont font;
 	if (activeIdx>=0) {

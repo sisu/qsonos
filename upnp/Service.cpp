@@ -51,6 +51,9 @@ QtSoapMessage Service::makeAction(QString name, ArgMap& params) const {
 	}
 	QtSoapMessage msg;
 	msg.setMethod(name, type);
+	// XXX: This makes every argument have type string.
+	// UPnP doesn't seem to require type specifications for arguments
+	// so hopefully it doesn't matter.
 	foreach(QString arg, params.keys())
 		msg.addMethodArgument(arg, "", params[arg]);
 	return msg;
@@ -113,7 +116,24 @@ void Service::actionRes() {
 	QtSoapMessage msg = soap.getResponse();
 	if (msg.isFault()) {
 		qDebug()<<"action failed: "<<msg.faultString().toString()<<";"<<msg.faultCode()<<";"<<msg.faultDetail().toString();
+		return;
 	}
 	qDebug()<<"action result:";
-	qDebug()<<msg.toXmlString(1);
+//	qDebug()<<msg.toXmlString(1);
+//	qDebug()<<msg.returnValue().id();
+	const QtSoapType& res = msg.method();
+	QString name = res.name().name();
+	// remove "Response"-suffix fron name
+	name.resize(name.size()-8);
+	Action action = getAction(name);
+	ArgMap outArgs;
+	foreach(QString arg, action.outArgs) {
+		const QtSoapType& val = res[arg];
+		qDebug()<<arg<<val.value().toString();
+		outArgs[arg] = val.value().toString();
+	}
+	emit gotResult(outArgs);
+//	qDebug()<<type.type();
+//	qDebug()<<type.name().name()<<type.toString();
+//	qDebug()<<type["Track"].value().toString();
 }
