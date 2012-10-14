@@ -35,6 +35,6 @@ void HttpReply::finished() {
 
 void HttpReply::wait() {
 	while(!reply->isFinished()) {
-		QApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents | QEventLoop::ExcludeUserInputEvents);
+		QApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents | QEventLoop::AllEvents);
 	}
 }

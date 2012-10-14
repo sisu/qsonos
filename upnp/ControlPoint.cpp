@@ -4,7 +4,6 @@
 #include "Http.hpp"
 #include "Service.hpp"
 #include <QDomDocument>
-#include <QApplication>
 
 namespace {
 	const QHostAddress mAddr("239.255.255.250");
@@ -67,13 +66,8 @@ void ControlPoint::handleReply(QByteArray data) {
 void ControlPoint::gotDoc(QUrl url, QDomDocument doc) {
 	QDomNode devN = getChild(doc.documentElement(), "device");
 	Device* dev = new Device(url, devN, *this);
-	QThread* make = new QThread;
-	dev->moveToThread(make);
-	connect(make, SIGNAL(started()),
-			dev, SLOT(init()));
-	connect(dev, SIGNAL(deviceReady()),
-			this, SLOT(addDevice()));
-	make->start();
+	dev->init();
+	emit newDevice(dev);
 }
 
 void ControlPoint::subscribe(Service& srv) {
