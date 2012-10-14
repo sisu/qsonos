@@ -17,3 +17,4 @@ CONFIG += debug
 include(upnp/upnp.pri)
 
 OBJECTS_DIR=obj
+MOC_DIR=obj
