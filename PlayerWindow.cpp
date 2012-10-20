@@ -1,5 +1,6 @@
 #include "PlayerWindow.hpp"
 #include "PlaylistWidget.hpp"
+#include "BrowseModel.hpp"
 #include "ZonePlayer.hpp"
 #include "common.hpp"
 #include "parse.hpp"
@@ -14,11 +15,21 @@
 #include <QSlider>
 #include <QSettings>
 #include <QKeySequence>
+#include <QTabWidget>
+#include <QTreeView>
 
 PlayerWindow::PlayerWindow(QWidget* par): QMainWindow(par), player(0) {
 	readSettings();
 	playlist = new PlaylistWidget(*this);
-	setCentralWidget(playlist);
+//	setCentralWidget(playlist);
+	QTreeView* browseView = new QTreeView;
+	BrowseModel* browseModel = new BrowseModel;
+	browseView->setModel(browseModel);
+	tabs = new QTabWidget(this);
+	tabs->addTab(browseView, "browse");
+	tabs->addTab(playlist, "queue");
+	tabs->setCurrentWidget(playlist);
+	setCentralWidget(tabs);
 	makeToolbar();
 }
 

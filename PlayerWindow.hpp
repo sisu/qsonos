@@ -9,6 +9,7 @@ class QLabel;
 class QAction;
 class QCloseEvent;
 class QTimerEvent;
+class QTabWidget;
 
 class PlayerWindow: public QMainWindow {
 	Q_OBJECT
@@ -30,6 +31,7 @@ private:
 	void makeToolbar();
 	void connectToolbar();
 	QAction* buttonActions[5];
+	QTabWidget* tabs;
 
 public slots:
 	void foundDevice(Device* dev);
